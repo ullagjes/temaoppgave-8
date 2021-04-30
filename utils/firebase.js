@@ -12,6 +12,7 @@ const firebaseConfig = {
 
 try {
     firebase.initializeApp(firebaseConfig)
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
 } catch(error){
     if(!/already exists/.test(error.message)){
       console.error('Firebase error')
@@ -20,3 +21,5 @@ try {
 
 const firebaseInstance = firebase;
 export default firebaseInstance ;
+
+

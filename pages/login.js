@@ -26,7 +26,7 @@ function logIn() {
     return (
         <>
         
-        <h1>Test</h1>
+        <h1>Log in</h1>
             <Formik
             initialValues= {{
                 email: '',

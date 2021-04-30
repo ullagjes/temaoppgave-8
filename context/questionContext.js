@@ -21,7 +21,6 @@ export const Question = ({ children }) => {
 
     const addQuestion = (question) => {
         setQuestions([...questions, question]);
-        router.push('/createquiz')
 
     };
     

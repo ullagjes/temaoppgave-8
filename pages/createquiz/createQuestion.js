@@ -33,6 +33,11 @@ function createQuestion() {
                     option_two: '',
                     option_three: '',
                     option_four: '',
+                    correctAnswers: []
+                    //is_option_one_correct: false,
+                    //is_option_two_correct: false,
+                    //is_option_three_correct: false,
+                    //is_option_four_correct: false,
                 }}
             />
         </>

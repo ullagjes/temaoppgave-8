@@ -1,7 +1,11 @@
 import React from 'react';
-import firebaseInstance from '../utils/firebase';
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
+
+import { useRouter } from 'next/router';
+import { createUserInFirestore } from '../utils/firebaseHelpers';
+import firebaseInstance from '../utils/firebase';
+
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().required().min(8).label('Email'),
@@ -9,10 +13,15 @@ const validationSchema = Yup.object().shape({
 })
 
 function register() {
+    const router = useRouter();
 
     async function onSubmit(values){
         try {
             await firebaseInstance.auth().createUserWithEmailAndPassword(values.email, values.password)
+            firebaseInstance.auth().onAuthStateChanged((user) => {
+                createUserInFirestore(user.uid)
+                router.push('/login')
+            })
             console.log('signed in!')
         } catch(error) {
             console.log('error')
@@ -21,7 +30,7 @@ function register() {
 
     return (
         <>
-            <h1>Test</h1>
+            <h1>Register new user</h1>
             <Formik
             initialValues= {{
                 email: '',

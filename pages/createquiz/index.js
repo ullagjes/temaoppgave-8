@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQuestion } from '../../context/questionContext';
 import { useAuth } from '../../context/authContext';
-import { createQuizDocument } from '../../utils/firebaseHelpers';
-import { createQuizPin } from '../../utils/firebaseHelpers';
+
+import { checkForUserData } from '../../utils/firebaseHelpers';
 import firebaseInstance from '../../utils/firebase';
 
+import QuizForm from '../../components/QuizForm';
 
-function createNewQuiz() {
+function CreateNewQuiz() {
 
     //User clicks on add new quiz
     //effect triggers new quizpin and creates new collection in firestore
@@ -19,10 +20,12 @@ function createNewQuiz() {
     const router = useRouter()
     
     const { questions, addQuestion, removeQuestion } = useQuestion();
-    const { user } = useAuth();
+    const { user, isAuthenticated, loading } = useAuth();
     const [userId, setUserId] = useState(null)
+    const [userData, setUserData] = useState(null)
     const [newQuizPin, setNewQuizPin] = useState(null)
 
+    const [toggle, setToggle] = useState(false)
 
     useEffect(() => {
         if(user){
@@ -36,34 +39,134 @@ function createNewQuiz() {
                 const val = snapshot.data()
                 setNewQuizPin(val.counter)
             })
+        } else {
+            console.log('nothing here')
         }
 
     }, [user])
 
-    async function addNewQuizFirestore(){
-        createQuizPin()
-        /*const collection = firebaseInstance
-        .firestore()
-        .collection('users')
+    useEffect(() => {
+        getQuizData(userId)
+    }, [isAuthenticated])
 
-        await collection.doc(JSON.stringify(newQuizPin)).set({name: 'ulla'});*/
-        await createQuizDocument(userId, JSON.stringify(newQuizPin))
+    async function getQuizData(userId){
+        const userData = await checkForUserData(userId)
+        setUserData(userData)
+    }
+    
+    function handleOpen(){
+        setToggle(true)
+    }
 
+    function handleClose(){
+        setToggle(false)
+    }
+
+    async function handleSignOut(){
+        await firebaseInstance.auth().signOut()
     }
 
 
+    //===========================================AUTHENTICATION
+    
+    if(loading){
+        return(
+        <>Loading...</>
+        );
+    };
+
+    if(isAuthenticated === false) {
+        router.push('/login');
+        return <>You aren't logged in.</>
+    };
+  
     return (
         <>
-            <p>{JSON.stringify(newQuizPin)}</p>
-            <button onClick={addNewQuizFirestore}>Create new quiz</button>
+            <p>{JSON.stringify(userData)}</p>
+            <p>User id: {JSON.stringify(userId)}</p>
+            <button onClick={handleSignOut}>Sign out</button>
+            <button onClick={handleOpen}>Create new quiz</button>
+            {toggle ? 
+                <QuizForm 
+                    quizPin={JSON.stringify(newQuizPin)} 
+                    userId={userId} 
+                    handleClose={handleClose}/> 
+                : null
+            }
+
+            <div>
+                {userData && userData.map((i, index) => {
+                    return (
+                        <div key={index}>
+                            <Link href={`/createquiz/${i.id}`} id={i.id}>
+                                <a>{i.quizName}</a>
+                            </Link>
+                        </div>
+                    )
+                })}
+            </div>
         </>
     );
 }
 
-export default createNewQuiz;
+export default CreateNewQuiz;
+
+
+
 
 /*
 
+sjekk .some() og .every()
+
+
+const myFilms = [{  title: 'Star Wars'}, year: 1989, tags: ["Action" ]}]
+
+const filtered= myFilms.filter(film => {
+    return film.tags.some(tag => tag === 'action')
+})
+
+const filtered = myFilms.filter(film => filter(film, 'Action'))
+
+function filter(film, tagName){
+    return film.tags.some(tag => tag === tagName)
+}
+
+//Finner den første filmen i et array med året 1999
+const result = myFilms.find(film => film.year === 1999)
+
+const resultHasTag = filter(result, 'Sci-Fi')
+
+const films = [
+    {
+        title: 'Star wars',
+        year: 1999,
+        actorCount: 300
+    },
+    {
+        title: 'Star trek',
+        year: 1995,
+        actorCount: 100
+    },
+    {
+        title: 'Jurassic Park',
+        year: 1993,
+        actorCount: 50
+    }
+]
+
+function countNumberOfActors(acc, film) {
+    return acc + film.actorCount
+}
+
+const totalActors = myFilms.reduce((countNumberOfActors, 0)
+
+
+
+/*const collection = firebaseInstance
+        .firestore()
+        .collection('users')
+
+        await collection.doc(JSON.stringify(newQuizPin)).set({name: 'ulla'});
 <div key={index}>
                     <QuestionForm 
                         initialValues={{

@@ -9,18 +9,22 @@ const schema = Yup.object().shape({
     option_two: Yup.string().required('At least two options required').label('Second option'),
     option_three: Yup.string().label('Question'),
     option_four: Yup.string().label('Question'),
+    correctAnswers: Yup.array().of(Yup.string().required()).min(1, 'Please select one or more correct answers').required()
+    //is_option_one_correct: Yup.boolean(),
+    //is_option_two_correct: Yup.boolean(),
+    //is_option_three_correct: Yup.boolean(),
+    //is_option_four_correct: Yup.boolean(),
 });
 
 function QuestionForm({ initialValues }) {
 
-    const { questions, addQuestion, removeQuestion } = useQuestion();
+    const { addQuestion } = useQuestion();
 
-    
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={schema}
-            onSubmit={(values) => addQuestion(values)}
+            onSubmit={(values) => console.log(values)}
         >
             <Form>
                 <label htmlFor='title'>Question</label>
@@ -30,24 +34,40 @@ function QuestionForm({ initialValues }) {
                 <br></br>
                 <label htmlFor='option_one'>Option 1:</label>
                 <Field name="option_one" type="text" placeholder="Option 1(required)"
-                />
+                /><label>
+                <Field type="checkbox" name="correctAnswers" value="option_one"/>
+                A.
+                </label>
                 <ErrorMessage name="option_one" />
                 <br></br>
                 <br></br>
                 <label htmlFor='option_two'>Option 2:</label>
                 <Field name="option_two" type="text" placeholder="Option 2(required)"
                 />
+                <label>
+                    <Field type="checkbox" name="correctAnswers" value="option_two"/>
+                    B.
+                </label>
                 <ErrorMessage name="option_two" />
                 <br></br>
                 <br></br>
                 <label htmlFor='option_three'>Option 3:</label>
                 <Field name="option_three" type="text" placeholder="Option 3(optional)"
                 />
+                <label>
+                    <Field type="checkbox" name="correctAnswers" value="option_three"/>
+                    C.
+                </label>
                 <br></br>
                 <br></br>
                 <label htmlFor='option_four'>Option 4:</label>
                 <Field name="option_four" type="text" placeholder="Option 4(optional)"
                 />
+                <label>
+                    <Field type="checkbox" name="correctAnswers" value="option_four"/>
+                    D.
+                </label>
+                <ErrorMessage name="correctAnswers" />
                 <br></br>
                 <button type="submit">Done</button>
                         

@@ -20,7 +20,7 @@ export const Question = ({ children }) => {
     const questionsCopy = [...questions];
 
     const addQuestion = (question) => {
-        setQuestions([...questions, question]);
+        setQuestions(question);
 
     };
     

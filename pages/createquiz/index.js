@@ -46,7 +46,8 @@ function CreateNewQuiz() {
     }, [user])
 
     useEffect(() => {
-        getQuizData(userId)
+        if(isAuthenticated) {
+            getQuizData(userId)}
     }, [isAuthenticated])
 
     async function getQuizData(userId){

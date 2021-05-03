@@ -4,24 +4,9 @@ const userCollection = firebaseInstance
 .firestore()
 .collection('users')
 
-
-
-export async function createQuizPin(){
-    const pinRef = firebaseInstance
-    .firestore()
-    .collection('globals')
-    .doc('A3xMG5HOTnEpws1AASxC')
-
-    await firebaseInstance.firestore().runTransaction((transaction) => {
-      return transaction.get(pinRef).then((doc) => {
-        const count = doc.data().counter
-        let newCount = count + 1
-        transaction.update(pinRef, {counter: newCount})
-        //setQuizPin(newCount);
-
-      })
-    })
-}
+const runningCollection = firebaseInstance
+.firestore()
+.collection('running')
 
 export async function createUserInFirestore(userId){
   
@@ -29,37 +14,6 @@ export async function createUserInFirestore(userId){
   .set({
     userId: userId
   })
-}
-
-export async function createQuizDocument(userId, quizPin, quizName) {
-  await userCollection
-  .doc(userId)
-  .collection('quizes')
-  .doc(quizPin)
-  .set({
-    quizPin: quizPin,
-    quizName: quizName
-  }, {merge: true})
-
-}
-
-export async function addQuestionToDocument(
-  userId, 
-  quizPin, 
-  quizTitle, 
-  answerObject,
-  correctAnswerObject
-  ) {
-  await userCollection
-  .doc(userId)
-  .collection('quizes')
-  .doc(quizPin)
-  .set({
-    title: quizTitle,
-    answers: { answerObject },
-    correctAnswer: { correctAnswerObject }
-  })  
-
 }
 
 export async function checkForUserData(userId){
@@ -84,19 +38,96 @@ export async function checkForUserData(userId){
 
 }
 
+export async function createQuizPin(){
+  const pinRef = firebaseInstance
+  .firestore()
+  .collection('globals')
+  .doc('A3xMG5HOTnEpws1AASxC')
+
+  await firebaseInstance.firestore().runTransaction((transaction) => {
+    return transaction.get(pinRef).then((doc) => {
+      const count = doc.data().counter
+      let newCount = count + 1
+      transaction.update(pinRef, {counter: newCount})
+    })
+  })
+}
+
+export async function createQuizDocument(userId, quizPin, quizName) {
+  await userCollection
+  .doc(userId)
+  .collection('quizes')
+  .doc(quizPin)
+  .set({
+    quizPin: quizPin,
+    quizName: quizName
+  }, {merge: true})
+
+}
+
+export async function addQuestionToDocument(
+  userId, 
+  quizPin,
+  counter,
+  values
+  ) {
+  await userCollection
+  .doc(userId)
+  .collection('quizes')
+  .doc(quizPin)
+  .collection('questions').doc(`question_${counter}`)
+  .set({
+      id: `question_${counter}`,
+      title: values.title,
+      options: {
+          a: values.option_one,
+          b: values.option_two,
+          c: values.option_three,
+          d: values.option_four,
+        },
+      correctAnswers: values.correctAnswers
+      }, {merge: true})
+}
+
+export async function updateQuestionData(userId, quizPin, questionId, values){
+  await userCollection
+  .doc(userId)
+  .collection('quizes')
+  .doc(quizPin)
+  .collection('questions')
+  .doc(questionId)
+  .update({
+      title: values.title,
+      options: {
+          a: values.option_one,
+          b: values.option_two,
+          c: values.option_three,
+          d: values.option_four,
+        },
+      correctAnswers: values.correctAnswers
+      }, {merge: true})
+}
+
 export async function checkForQuizData(userId, quizPin){
   if(userId){
       try {
-        const collection = firebaseInstance
-        .firestore()
-        .collection(userId)
-
-        collection.doc(quizPin)
+      let selectedQuizCollection = await userCollection
+        .doc(userId)
+        .collection('quizes')
+        .doc(quizPin)
+        .collection('questions')
         .get()
-        .then((doc) => {
-          let data = doc.data()
-          return data
+      
+      const array = []
+
+      selectedQuizCollection.forEach(item => {
+        array.push({
+          id: item.id,
+          ...item.data()
         })
+      })
+
+      return(array)
 
     } catch(error){
       return console.log('error when fetching quizdata', error)
@@ -104,4 +135,55 @@ export async function checkForQuizData(userId, quizPin){
   } else {
     return console.log('user not found')
   }
+}
+
+export async function getQuestionData(user, quizPin, questionId){
+  
+  let document = await userCollection
+  .doc(user)
+  .collection('quizes')
+  .doc(quizPin)
+  .collection('questions')
+  .doc(questionId)
+  .get()
+  .then((doc) => {
+      if (doc.exists){
+          return doc.data()
+      } else {
+          console.log('does not exist')
+      }
+  })
+
+  return document
+}
+
+export async function countCollection(user, quizPin){
+  const array = []
+  await firebaseInstance
+    .firestore()
+    .collection('users')
+    .doc(user)
+    .collection('quizes')
+    .doc(quizPin)
+    .collection('questions')
+    .get()
+    .then(snap => {
+            array.push(snap.size)
+        })
+    return(array)
+
+}
+
+export async function addQuizToRunningCollection(quizPin){
+  await runningCollection
+  .doc(quizPin)
+  .set({})
+}
+
+export async function addQuestionToRunningQuiz(quizPin, data){
+  await runningCollection
+  .doc(quizPin)
+  .update({
+    data
+  }, {merge: true})
 }

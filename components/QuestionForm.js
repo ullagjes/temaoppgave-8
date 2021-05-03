@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import firebaseInstance from '../utils/firebase';
+import { useAuth } from '../context/authContext';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useQuestion } from '../context/questionContext';
+import { addQuestionToDocument } from '../utils/firebaseHelpers';
 
 const schema = Yup.object().shape({
     title: Yup.string().required('Please add a question').label('Question'),
@@ -10,21 +13,18 @@ const schema = Yup.object().shape({
     option_three: Yup.string().label('Question'),
     option_four: Yup.string().label('Question'),
     correctAnswers: Yup.array().of(Yup.string().required()).min(1, 'Please select one or more correct answers').required()
-    //is_option_one_correct: Yup.boolean(),
-    //is_option_two_correct: Yup.boolean(),
-    //is_option_three_correct: Yup.boolean(),
-    //is_option_four_correct: Yup.boolean(),
 });
 
-function QuestionForm({ initialValues }) {
+function QuestionForm({ initialValues, onSubmit }) {
 
-    const { addQuestion } = useQuestion();
-
+  
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={schema}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={
+                (values) => onSubmit(values)
+            }
         >
             <Form>
                 <label htmlFor='title'>Question</label>
@@ -77,3 +77,24 @@ function QuestionForm({ initialValues }) {
 }
 
 export default QuestionForm;
+
+/**async function addQuestionToFiresTore(values){
+        await firebaseInstance
+        .firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('quizes')
+        .doc(quizPin)
+        .collection('questions').doc(`question_${counter}`)
+        .set({
+            id: `question_${counter}`,
+            title: values.title,
+            options: {
+                a: values.option_one,
+                b: values.option_two,
+                c: values.option_three,
+                d: values.option_four,
+            },
+            correctAnswers: values.correctAnswers
+        }, {merge: true})
+    } */

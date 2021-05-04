@@ -96,6 +96,8 @@ function hostRunningQuiz() {
             : 
             <>
                <h2>Quiz over!</h2> 
+               <h3>Scores:</h3>
+               
             </>
             }
         </div>

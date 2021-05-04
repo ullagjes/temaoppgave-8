@@ -16,14 +16,18 @@ const schema = Yup.object().shape({
 });
 
 function QuestionForm({ initialValues, onSubmit }) {
+    
+    
 
-  
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={schema}
             onSubmit={
-                (values) => onSubmit(values)
+                (values, { resetForm }) => {
+                    onSubmit(values)
+                    resetForm()
+                }
             }
         >
             <Form>

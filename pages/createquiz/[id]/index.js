@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { useAuth } from '../../../context/authContext';
-import { addQuestionToDocument, addQuizToRunningCollection, checkForQuizData, countCollection } from '../../../utils/firebaseHelpers';
+import { 
+    addQuestionToDocument, 
+    addQuizToRunningCollection, 
+    checkForQuizData, 
+    countCollection 
+} from '../../../utils/firebaseHelpers';
+
+import NavBar from '../../../components/NavBar';
 import QuestionForm from '../../../components/QuestionForm';
 
 function createQuestions () {
@@ -29,7 +36,7 @@ function createQuestions () {
     }, [user])
 
     useEffect(() => {
-        console.log(selectedQuizData)
+        console.log('data loaded from firestore in createQuestions:', selectedQuizData)
     }, [selectedQuizData])
 
     async function getSelectedQuizData(user, quizPin){
@@ -47,19 +54,37 @@ function createQuestions () {
         setCounter(collectionLength)
     }
 
-    async function addQuestionToFiresTore(values){
-        await addQuestionToDocument(user.uid, id, counter, values)
+    async function addQuestionToFiresTore(values){        
+        try {
+            await addQuestionToDocument(user.uid, id, counter, values)
+            
+        } catch(error) {
+            console.log('error when adding question to firestore', error)
+        }
     }
 
     async function startQuiz(){
-        await addQuizToRunningCollection(id)
+        await addQuizToRunningCollection(id, selectedQuizData)
         router.push(`/runquiz/${id}`)
     }
 
     return (
-        <>
-            <button onClick={startQuiz}>Run quiz!</button>
-            <div> 
+        <>  
+            <NavBar />
+            <div>
+                <div>
+                    {selectedQuizData && selectedQuizData.map((i, index) => {
+                        return (
+                            <Link href={`${id}/${i.id}/`} key={index}>
+                                <a>
+                                    <div>
+                                        <h2>{i.title}</h2>
+                                    </div>    
+                                </a>
+                            </Link>
+                        )
+                    })}
+                </div>
                 <button onClick={createNewQuestion}>Add question</button>
                 {toggle ? 
                     <QuestionForm 
@@ -77,22 +102,7 @@ function createQuestions () {
                     /> 
                 : ''}
             </div>
-            <div>
-                {selectedQuizData && selectedQuizData.map((i, index) => {
-                    return (
-                        <Link href={`${id}/${i.id}/`} key={index}>
-                            <a>
-                                <div>
-                                    <h2>{i.title}</h2>
-                                </div>    
-                            </a>
-                        </Link>
-                    )
-                })}
-            </div>
-            {user && JSON.stringify(user.uid)}
-            {JSON.stringify(selectedQuizData)}
-            {JSON.stringify(counter)}
+            <button onClick={startQuiz}>Run quiz!</button>
         </>
     );
 }

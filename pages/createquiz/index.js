@@ -1,28 +1,17 @@
 import React, { useEffect, useState  } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useQuestion } from '../../context/questionContext';
-import { useAuth } from '../../context/authContext';
 
-import { checkForUserData } from '../../utils/firebaseHelpers';
+import { useAuth } from '../../context/authContext';
 import firebaseInstance from '../../utils/firebase';
 
+import NavBar from '../../components/NavBar';
 import QuizForm from '../../components/QuizForm';
 
 function CreateNewQuiz() {
 
-    //User clicks on add new quiz
-    //effect triggers new quizpin and creates new collection in firestore
-
-    //const [array, setArray] = useState([1])
-    //const [count, setCount] = useState(2)
-
     const router = useRouter()
-    
-    const { questions, addQuestion, removeQuestion } = useQuestion();
     const { user, isAuthenticated, loading } = useAuth();
     const [userId, setUserId] = useState(null)
-    const [userData, setUserData] = useState(null)
     const [newQuizPin, setNewQuizPin] = useState(null)
 
     const [toggle, setToggle] = useState(false)
@@ -39,22 +28,9 @@ function CreateNewQuiz() {
                 const val = snapshot.data()
                 setNewQuizPin(val.counter)
             })
-        } else {
-            console.log('nothing here')
         }
-
     }, [user])
 
-    useEffect(() => {
-        if(isAuthenticated) {
-            getQuizData(userId)}
-    }, [isAuthenticated])
-
-    async function getQuizData(userId){
-        const userData = await checkForUserData(userId)
-        setUserData(userData)
-    }
-    
     function handleOpen(){
         setToggle(true)
     }
@@ -62,11 +38,6 @@ function CreateNewQuiz() {
     function handleClose(){
         setToggle(false)
     }
-
-    async function handleSignOut(){
-        await firebaseInstance.auth().signOut()
-    }
-
 
     //===========================================AUTHENTICATION
     
@@ -83,9 +54,7 @@ function CreateNewQuiz() {
   
     return (
         <>
-            <p>{JSON.stringify(userData)}</p>
-            <p>User id: {JSON.stringify(userId)}</p>
-            <button onClick={handleSignOut}>Sign out</button>
+            <NavBar />
             <button onClick={handleOpen}>Create new quiz</button>
             {toggle ? 
                 <QuizForm 
@@ -94,18 +63,6 @@ function CreateNewQuiz() {
                     handleClose={handleClose}/> 
                 : null
             }
-
-            <div>
-                {userData && userData.map((i, index) => {
-                    return (
-                        <div key={index}>
-                            <Link href={`/createquiz/${i.id}`} id={i.id}>
-                                <a>{i.quizName}</a>
-                            </Link>
-                        </div>
-                    )
-                })}
-            </div>
         </>
     );
 }
@@ -116,6 +73,19 @@ export default CreateNewQuiz;
 
 
 /*
+
+
+
+    /*useEffect(() => {
+        if(isAuthenticated) {
+            getQuizData(userId)}
+    }, [isAuthenticated])
+
+    async function getQuizData(userId){
+        const userData = await checkForUserData(userId)
+        setUserData(userData)
+    }
+
 
 sjekk .some() og .every()
 
@@ -163,7 +133,9 @@ const totalActors = myFilms.reduce((countNumberOfActors, 0)
 
 
 
-/*const collection = firebaseInstance
+const [userData, setUserData] = useState(null)
+ 
+ const collection = firebaseInstance
         .firestore()
         .collection('users')
 
@@ -287,7 +259,7 @@ const totalActors = myFilms.reduce((countNumberOfActors, 0)
         })}
 
 
-*<FieldArray>
+<FieldArray>
                 {() => () => {
                     return (
                         <>

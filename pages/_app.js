@@ -1,14 +1,18 @@
 import '../styles/globals.css'
 import { AuthProvider } from '../context/authContext';
 import { Question } from '../context/questionContext';
+import { QuizMaster } from '../context/quizMasterContext';
 
 
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <Question>
-        <Component {...pageProps} />  
-      </Question>
+      <QuizMaster>
+        <Question>
+          <Component {...pageProps} />  
+        </Question>
+      </QuizMaster>
+      
     </AuthProvider>
       
     )

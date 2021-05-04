@@ -174,16 +174,56 @@ export async function countCollection(user, quizPin){
 
 }
 
-export async function addQuizToRunningCollection(quizPin){
-  await runningCollection
+export async function addQuizToRunningCollection(quizPin, selectedQuizData){
+  console.log(selectedQuizData)
+  
+  const collection = await firebaseInstance
+  .firestore()
+  .collection('running')
   .doc(quizPin)
-  .set({})
+  .collection('questions')
+  
+  await selectedQuizData.forEach(i => {
+    collection.doc(i.id)
+    .set({
+      id: i.id,
+      title: i.title,
+      options: {
+        a: i.options.a,
+        b: i.options.b,
+        c: i.options.c,
+        d: i.options.d,
+      },
+      correctAnswers: i.correctAnswers,
+      isSelected: false
+  
+    }, {merge: true})
+  })
 }
 
-export async function addQuestionToRunningQuiz(quizPin, data){
+export async function showCurrentQuestion(quizPin, questionId){
   await runningCollection
   .doc(quizPin)
+  .collection('questions')
+  .doc(questionId)
   .update({
-    data
+    isSelected: true
   }, {merge: true})
+}
+
+export async function hideQuestions(quizPin, questions){
+  const collection = await runningCollection
+  .doc(quizPin)
+  .collection('questions')
+  
+  await questions.forEach(i => {
+    collection.doc(i.id)
+    .update({
+      isSelected: false
+    }, {merge: true})
+  })
+}
+
+export async function handleSignOut(){
+  await firebaseInstance.auth().signOut()
 }

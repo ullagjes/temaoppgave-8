@@ -17,7 +17,7 @@ function logIn() {
         try {
             await firebaseInstance.auth().signInWithEmailAndPassword(values.email, values.password)
             console.log('logged in!')
-            router.push('/createquiz')
+            router.push('/quizmaster/profile')
         } catch(error) {
             console.log('error')
         }

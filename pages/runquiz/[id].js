@@ -11,10 +11,15 @@ function hostRunningQuiz() {
     const { id } = router.query;
     const { user } = useAuth();
 
+    const [quizRunning, setQuizRunning] = useState(true)
     const [quizData, setQuizData] = useState([])
     const [currentQuestion, setCurrentQuestion] = useState(0)
-    const [question, setQuestion] = useState('')
+    const [question, setQuestion] = useState(null)
     
+    const filter = quizData.filter(i => {
+        return(i !== question)
+    })
+
     useEffect(() => {
         if(user){
             getData(user.uid, id)
@@ -23,26 +28,55 @@ function hostRunningQuiz() {
 
     useEffect(() => {
         setQuestion(quizData[currentQuestion])
-       
     }, [quizData, currentQuestion])
+
+    useEffect(() => {
+
+        if(question !== undefined){
+            if(question !== null && currentQuestion === 0){
+                showFirstQ(id, question.id)
+            }
+            
+            if(question !== null){
+                toggleQuestionVisibility()
+            }
+        }
+        
+    }, [question])
 
     async function getData(user, quizPin){
         const data = await checkForQuizData(user, quizPin)
         setQuizData(data)
     }
 
-    async function nextQuestion(){
-        const filter = quizData.filter(i => {
-            return(i !== question)
-        })
+    async function showFirstQ(quizPin, questionId){
+        if(question !== undefined){
+            await showCurrentQuestion(quizPin, questionId)
+        }
+    }
 
-        setCurrentQuestion(currentQuestion + 1)
+    async function toggleQuestionVisibility(){
         await showCurrentQuestion(id, question.id)
         await hideQuestions(id, filter)
     }
 
-    function testValues(){
-        console.log(question.id)
+    async function nextQuestion(){
+        if(currentQuestion + 1 === quizData.length){
+            await hideQuestions(id, quizData)
+            setQuizRunning(false)
+        } else {
+            setCurrentQuestion(currentQuestion + 1)
+        }
+    }
+
+    async function previousQuestion(){
+        setCurrentQuestion(currentQuestion - 1)
+    }
+
+    async function testValues(){
+        console.log('all data:', quizData)
+        console.log('current q:', currentQuestion)
+        showFirstQ(id, question.id)
         const filter = quizData.filter(i => {
             return(i !== question)
         })
@@ -52,9 +86,18 @@ function hostRunningQuiz() {
 
     return (
         <div>
-            <p>{JSON.stringify(question)}</p>
-            <button onClick={nextQuestion}>Next question</button>
-            <button onClick={testValues}>test</button>
+            {quizRunning ? 
+            <>
+                <p>{JSON.stringify(question)}</p>
+                {currentQuestion > 0 ? <button onClick={previousQuestion}>Previous question</button> : ''}
+                <button onClick={nextQuestion}>Next question</button>
+                <button onClick={testValues}>test</button>
+            </>    
+            : 
+            <>
+               <h2>Quiz over!</h2> 
+            </>
+            }
         </div>
     );
 }

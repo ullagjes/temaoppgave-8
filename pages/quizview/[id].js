@@ -33,8 +33,35 @@ function quizView() {
     
     return (
         <div>
-            {JSON.stringify(data)}
-            
+            {data.length === 0 ? <p>No quiz running!</p> : ''}
+            {data && data.map((i, index) => {
+                return (
+                    <div key={index}>
+                        <h2>{i.title}</h2>
+                        <div>
+                            <p>A)</p>
+                            <p>{i.options.a}</p>
+                        </div>
+                        <div>
+                            <p>B)</p>
+                            <p>{i.options.b}</p>
+                        </div>
+                        {i.options.c && 
+                            <div>
+                                <p>C)</p>
+                                <p>{i.options.c}</p>
+                            </div>
+                        }
+                        {i.options.d && 
+                            <div>
+                                <p>D)</p>
+                                <p>{i.options.d}</p>
+                            </div>
+                        }
+                    </div>
+                    )
+                })
+            }
         </div>
     );
 

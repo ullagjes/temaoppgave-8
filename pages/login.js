@@ -11,7 +11,7 @@ const validationSchema = Yup.object().shape({
 
 function logIn() {
 
-    const router = useRouter()
+    const router = useRouter();
 
     async function onSubmit(values){
         try {

@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import firebaseInstance from '../utils/firebase';
-import { useAuth } from '../context/authContext';
+import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useQuestion } from '../context/questionContext';
-import { addQuestionToDocument } from '../utils/firebaseHelpers';
 
 const schema = Yup.object().shape({
     title: Yup.string().required('Please add a question').label('Question'),

@@ -7,8 +7,10 @@ import { useAuth } from '../../../context/authContext';
 import { 
     addQuestionToDocument, 
     addQuizToRunningCollection, 
+    addTitleToRunningQuiz, 
     checkForQuizData, 
-    countCollection 
+    countCollection,
+    getQuizTitle 
 } from '../../../utils/firebaseHelpers';
 
 import NavBar from '../../../components/NavBar';
@@ -22,6 +24,7 @@ function createQuestions () {
     const { id } = router.query
 
     const [selectedQuizData, setSelectedQuizData] = useState([])
+    const [selectedQuizTitle, setSelectedQuizTitle] = useState([])
     const [toggle, setToggle] = useState(false)
     const [counter, setCounter] = useState(null)
 
@@ -41,7 +44,10 @@ function createQuestions () {
 
     async function getSelectedQuizData(user, quizPin){
         const data = await checkForQuizData(user, quizPin)
-        setSelectedQuizData(data)
+        const title = await getQuizTitle(user, quizPin)
+        console.log(title)
+        setSelectedQuizTitle(title)
+        setSelectedQuizData([...data])
     }
     
     function createNewQuestion(){
@@ -64,14 +70,21 @@ function createQuestions () {
     }
 
     async function startQuiz(){
+        await addTitleToRunningQuiz(id, selectedQuizTitle)
         await addQuizToRunningCollection(id, selectedQuizData)
         router.push(`/runquiz/${id}`)
+    }
+
+    function testValues(){
+        console.log(selectedQuizData[0])
     }
 
     return (
         <>  
             <NavBar />
             <div>
+                <button onClick={testValues}>test</button>
+                <h1>{selectedQuizTitle}</h1>
                 <div>
                     {selectedQuizData && selectedQuizData.map((i, index) => {
                         return (

@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../context/authContext';
 import { checkForQuizData, hideQuestions, showCurrentQuestion } from '../../utils/firebaseHelpers';
 
-
 function hostRunningQuiz() {
 
     const router = useRouter();

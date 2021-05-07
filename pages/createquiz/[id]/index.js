@@ -31,6 +31,7 @@ function createQuestions () {
     useEffect(() => {
         if(user){
             getSelectedQuizData(user.uid, id)
+
         }
 
         if(counter === null && user){
@@ -39,7 +40,7 @@ function createQuestions () {
     }, [user])
 
     useEffect(() => {
-        console.log('data loaded from firestore in createQuestions:', selectedQuizData)
+        console.log('data loaded from firestore in createQuestions:', selectedQuizData.length)
     }, [selectedQuizData])
 
     async function getSelectedQuizData(user, quizPin){
@@ -52,7 +53,7 @@ function createQuestions () {
     
     function createNewQuestion(){
         setToggle(true)
-        getCounter(user.uid, id)
+        //getCounter(user.uid, id)
     }
 
     async function getCounter(user, quizPin){
@@ -63,7 +64,7 @@ function createQuestions () {
     async function addQuestionToFiresTore(values){        
         try {
             await addQuestionToDocument(user.uid, id, counter, values)
-            
+            getCounter(user.uid, id)
         } catch(error) {
             console.log('error when adding question to firestore', error)
         }
@@ -83,6 +84,7 @@ function createQuestions () {
         <>  
             <NavBar />
             <div>
+                {JSON.stringify(counter)}
                 <button onClick={testValues}>test</button>
                 <h1>{selectedQuizTitle}</h1>
                 <div>

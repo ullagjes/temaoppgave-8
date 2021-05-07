@@ -3,57 +3,116 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import firebaseInstance from '../../../../utils/firebase';
-import { getCorrectAnswer, getCurrentPoints, submitAnswerToFireStore, updateUserPoints } from '../../../../utils/firebaseHelpers';
 
+import { 
+    getCorrectAnswer, 
+    submitAnswerToFireStore, 
+    updateUserPoints 
+} from '../../../../utils/firebaseHelpers';
 function ParticipantQuizView() {
 
     const router = useRouter()
     const { id, participantId } = router.query;
-
     const [screenLocked, setScreenLocked] = useState(true)
+    const [quizRunning, setQuizRunning] = useState(true)
     const [userPoints, setUserPoints] = useState(0)
     const [userFeedBack, setUserFeedBack] = useState('')
     const [data, setData] = useState([])
 
     useEffect(() => {
-        getPoints(id, participantId)
-        
-        const sorted = firebaseInstance
+        let participantDocument = firebaseInstance
         .firestore()
         .collection('running')
         .doc(id)
-        .collection('questions')
-        .where('isSelected', '==', true)
-        
-        return sorted.onSnapshot((snapshot) => {
-            let array = []
-            snapshot.forEach((doc) => {
-                array.push({
-                    id: doc.id,
-                    title: doc.data().title,
-                    options: doc.data().options,
-                })
-            })
+        .collection('participants')
+        .doc(participantId)
 
-            setData(array)
-            setScreenLocked(false)
-            setUserFeedBack('')
-        })
+        async function getParticipantData(){
+
+            await participantDocument.collection('answers')
+            .doc(data[0].id)
+            .get()
+            .then((doc) => {
+                if (doc.exists){
+                    console.log('dokumentet eksisterer')
+                    setScreenLocked(true)
+                    setUserFeedBack('You have already answered!')
+                } else {
+                    console.log('dokumentet eksisterer ikke')
+                    setScreenLocked(false)
+                }
+            })
+        }
+
+        async function getParticipantPoints(){
+            await participantDocument.get()
+            .then((doc) => {
+                if(doc.exists){
+                    setUserPoints(doc.data().points)
+                }
+            })
+        }
+
+        if(data.length > 0){
+            getParticipantData()
+            getParticipantPoints()
+        }
+    }, [data])
+
+    useEffect(() => {
+        const quizDocument = firebaseInstance
+        .firestore()
+        .collection('running')
+        .doc(id)
+
+        checkIfQuizIsRunning()
+
+        async function checkIfQuizIsRunning (){
+            quizDocument.get()
+            .then((doc) => {
+                if(doc.exists){
+
+                    if(doc.data().isActive === false){
+                        setQuizRunning(false)
+                        setScreenLocked(true)
+                        setUserFeedBack('Quiz over!')
+                        console.log('quiz is no longer active')
+
+                    } else {
+                        const sorted = quizDocument.collection('questions')
+                        .where('isSelected', '==', true)
+            
+                        return sorted.onSnapshot((snapshot) => {
+                            let array = []
+                            snapshot.forEach((doc) => {
+                                array.push({
+                                    id: doc.id,
+                                    title: doc.data().title,
+                                    options: doc.data().options,
+                                })
+                            })
+        
+                            setData(array)
+                            setScreenLocked(false)
+                            setUserFeedBack('')
+                        })
+                    }
+                    
+                } 
+            })  
+        } 
     }, [id])
 
     useEffect(() => {
-        updateUserPoints(id, participantId, userPoints)
+        async function updatePoints(){
+            await updateUserPoints(id, participantId, userPoints)
+        }
+        updatePoints()
     }, [userPoints])
-
-    async function getPoints(id, participantId){
-        let currentPoints = await getCurrentPoints(id, participantId)
-        setUserPoints(currentPoints)
-    }
 
     async function submitAnswer(value){
         await submitAnswerToFireStore(id, participantId, data[0].id, value)
         await checkScore(value)
-       
         setScreenLocked(true)
     }
 
@@ -66,13 +125,11 @@ function ParticipantQuizView() {
         } else {
             setUserFeedBack('Wrong!')
         }
-
     }
 
     function Loading(){
         return (
             <>
-            
                 <p>{userFeedBack}</p>
                 <p>{userPoints}</p>
             </>
@@ -101,7 +158,6 @@ function ParticipantQuizView() {
         <main>
 
             {screenLocked ? <Loading /> : <ShowOptons />}
-            
         </main>
     );
 }

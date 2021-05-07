@@ -243,7 +243,8 @@ export async function addTitleToRunningQuiz(quizPin, selectedQuizTitle){
   .collection('running')
   .doc(quizPin)
   .set({
-    title: selectedQuizTitle
+    title: selectedQuizTitle,
+    isActive: true
   }, {merge: true})
 
 }
@@ -312,23 +313,6 @@ export async function addParticipantToRunningQuiz(quizPin, userNickname) {
   
 }
 
-export async function getCurrentPoints(quizPin, userNickname){
-  const collection = await firebaseInstance
-  .firestore()
-  .collection('running')
-  .doc(quizPin)
-  .collection('participants')
-
-  const document = collection.doc(userNickname)
-
-  const userDocument = document.get()
-  .then((doc) => {
-    return doc.data().points
-  })
-
-  return userDocument
-}
-
 export async function submitAnswerToFireStore(quizPin, userNickname, questionId, answer) {
   const dbCol = firebaseInstance
   .firestore()
@@ -341,10 +325,10 @@ export async function submitAnswerToFireStore(quizPin, userNickname, questionId,
   
   const currentAnswer = userAnswers.doc(questionId)
   
-  currentAnswer.get()
+  await currentAnswer.get()
   .then((doc) => {
     if(doc.exists){
-      alert('you have already answered!')
+      alert('Question is already answered!')
     } else {
       currentAnswer.set({answer: answer}, {merge: true})
     }
@@ -371,24 +355,32 @@ export async function getCorrectAnswer(quizPin, questionId) {
 }
 
 export async function updateUserPoints(quizPin, userNickname, points) {
-  const collection = await firebaseInstance
-  .firestore()
-  .collection('running')
-  .doc(quizPin)
-  .collection('participants')
+  if(points){
 
-  const document = collection.doc(userNickname)
-
-  const userDocument = document.get()
-  .then((doc) => {
-    if(doc.exists){
-      document.update({
-        points: points
-      }, {merge: true})
-    } else {
-      console.log('error when updating points')
+    try {
+      const participantDocument = firebaseInstance
+      .firestore()
+      .collection('running')
+      .doc(quizPin)
+      .collection('participants')
+      .doc(userNickname)
+  
+      participantDocument.get()
+      .then((doc) => {
+        if(doc.exists){
+          participantDocument.update({
+            points: points
+          }, {merge: true})
+        } else {
+          console.log('error when updating points')
+        }
+      })
+      
+    } catch (error){
+  
+      console.log('error with points', error)  
     }
-  })
+  }
 
-  return userDocument
+ 
 }

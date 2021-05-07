@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '../../context/authContext';
 import { checkForQuizData, hideQuestions, showCurrentQuestion } from '../../utils/firebaseHelpers';
+import firebaseInstance from '../../utils/firebase';
 
 function hostRunningQuiz() {
 
@@ -62,6 +63,7 @@ function hostRunningQuiz() {
     async function nextQuestion(){
         if(currentQuestion + 1 === quizData.length){
             await hideQuestions(id, quizData)
+            await showEndResults()
             setQuizRunning(false)
         } else {
             setCurrentQuestion(currentQuestion + 1)
@@ -70,6 +72,22 @@ function hostRunningQuiz() {
 
     async function previousQuestion(){
         setCurrentQuestion(currentQuestion - 1)
+    }
+
+    async function showEndResults(){
+        const quizDocument = firebaseInstance
+        .firestore()
+        .collection('running')
+        .doc(id)
+        
+        await quizDocument.get()
+        .then((doc) => {
+            if(doc.exists){
+                quizDocument.update({
+                    isActive: false
+                })
+            }
+        })
     }
 
     async function testValues(){
@@ -96,6 +114,7 @@ function hostRunningQuiz() {
             <>
                <h2>Quiz over!</h2> 
                <h3>Scores:</h3>
+               <button>End quiz</button>
                
             </>
             }

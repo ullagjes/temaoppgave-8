@@ -10,10 +10,13 @@ function quizView() {
 
     useEffect(() => {
         
-        const sorted = firebaseInstance
+        const runningQuizDocument = firebaseInstance
         .firestore()
         .collection('running')
         .doc(id)
+
+        
+        const sorted = runningQuizDocument
         .collection('questions')
         .where('isSelected', '==', true)
         
@@ -29,6 +32,8 @@ function quizView() {
             setData(array)
 
         })
+
+
     }, [id])
     
     return (

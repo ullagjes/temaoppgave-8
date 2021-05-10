@@ -68,7 +68,7 @@ export async function createQuizDocument(userId, quizPin, quizName) {
   .doc(quizPin)
   .set({
     quizPin: quizPin,
-    quizName: quizName
+    quizName: quizName,
   }, {merge: true})
 
 }
@@ -244,7 +244,8 @@ export async function addTitleToRunningQuiz(quizPin, selectedQuizTitle){
   .doc(quizPin)
   .set({
     title: selectedQuizTitle,
-    isActive: true
+    isActive: true,
+    isPending: false,
   }, {merge: true})
 
 }
@@ -383,4 +384,27 @@ export async function updateUserPoints(quizPin, userNickname, points) {
   }
 
  
+}
+
+export async function getAllParticipantScores(quizPin){
+  try {
+    const participantData = await runningCollection
+    .doc(quizPin)
+    .collection('participants')
+    .get()
+      
+      const array = []
+
+      participantData.forEach(item => {
+        array.push({
+          id: item.id,
+          ...item.data()
+        })
+      })
+
+      return(array)
+  } catch(error){
+    console.log('error when collection participant scores', error)
+  }
+
 }

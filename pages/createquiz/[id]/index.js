@@ -31,7 +31,6 @@ function createQuestions () {
     useEffect(() => {
         if(user){
             getSelectedQuizData(user.uid, id)
-
         }
 
         if(counter === null && user){
@@ -53,7 +52,6 @@ function createQuestions () {
     
     function createNewQuestion(){
         setToggle(true)
-        //getCounter(user.uid, id)
     }
 
     async function getCounter(user, quizPin){

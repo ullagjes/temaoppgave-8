@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import firebaseInstance from '../../utils/firebase';
+import { getAllParticipantScores } from '../../utils/firebaseHelpers';
 
 function quizView() {
 
     const [data, setData] = useState([])
+    const [isPending, setIsPending] = useState()
+    const [isActive, setIsActive] = useState()
+    const [participantScores, setParticipantScores] = useState([])
     const router = useRouter();
     const { id } = router.query;
 
     useEffect(() => {
-        
         const runningQuizDocument = firebaseInstance
         .firestore()
         .collection('running')
         .doc(id)
 
-        
+        return runningQuizDocument.onSnapshot((snapshot) => {
+            setIsPending(snapshot.data().isPending)
+            setIsActive(snapshot.data().isActive)
+        })
+
+    }, [id])
+
+    useEffect(() => {
+        const runningQuizDocument = firebaseInstance
+        .firestore()
+        .collection('running')
+        .doc(id)
+
         const sorted = runningQuizDocument
         .collection('questions')
         .where('isSelected', '==', true)
@@ -28,17 +43,22 @@ function quizView() {
                     ...doc.data()
                 })
             })
-
             setData(array)
-
         })
+    }, [id, isPending])
 
+    useEffect(() => {
+        updateParticipantScores(id)
+    }, [data])
 
-    }, [id])
-    
-    return (
-        <div>
-            {data.length === 0 ? <p>No quiz running!</p> : ''}
+    async function updateParticipantScores(quizPin) {
+        const data = await getAllParticipantScores(quizPin)
+        setParticipantScores(data)
+    }
+
+    function ShowQComponent(){
+        return(
+            <div>
             {data && data.map((i, index) => {
                 return (
                     <div key={index}>
@@ -66,6 +86,45 @@ function quizView() {
                     </div>
                     )
                 })
+            }
+            </div>
+
+        )
+    }
+
+    function ShowScoresComponent() {
+
+        return(
+            <div>
+                <h1>The scores are:</h1>
+                {participantScores && participantScores.map((i, index) => {
+                    return(
+                        <p key={index}>{i.id.toUpperCase()}: {i.points}</p>
+                    )
+                })}
+            </div>
+        )
+    }
+
+    function ShowFinalScoresComponent(){
+        return(
+            <div>
+                <h1>Quiz over!</h1>
+                <p>Final scores:</p>
+                {participantScores && participantScores.map((i, index) => {
+                    return(
+                        <p key={index}>{i.id.toUpperCase()}: {i.points}</p>
+                    )
+                })}
+            </div>
+        )
+    }
+    
+    return (
+        <div>
+            {isPending ? <ShowScoresComponent /> : <ShowQComponent />}
+            {(!isActive && !isPending) &&
+                <ShowFinalScoresComponent />
             }
         </div>
     );

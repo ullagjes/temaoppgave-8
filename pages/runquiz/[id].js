@@ -2,8 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { useAuth } from '../../context/authContext';
-import { checkForQuizData, hideQuestions, showCurrentQuestion } from '../../utils/firebaseHelpers';
+import { 
+    checkForQuizData, 
+    hideQuestions, 
+    getAllParticipantScores, 
+    showCurrentQuestion 
+} from '../../utils/firebaseHelpers';
 import firebaseInstance from '../../utils/firebase';
+
+//TODO: check firestore data for quizrunning instead of usestate
 
 function hostRunningQuiz() {
 
@@ -12,10 +19,11 @@ function hostRunningQuiz() {
     const { user } = useAuth();
 
     const [quizRunning, setQuizRunning] = useState(true)
+    const [quizPending, setQuizPending] = useState(false)
     const [quizData, setQuizData] = useState([])
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [question, setQuestion] = useState(null)
-    
+    const [participantScores, setParticipantScores] = useState([])
     const filter = quizData.filter(i => {
         return(i !== question)
     })
@@ -31,17 +39,14 @@ function hostRunningQuiz() {
     }, [quizData, currentQuestion])
 
     useEffect(() => {
-
         if(question !== undefined){
             if(question !== null && currentQuestion === 0){
                 showFirstQ(id, question.id)
             }
-            
             if(question !== null){
                 toggleQuestionVisibility()
             }
         }
-        
     }, [question])
 
     async function getData(user, quizPin){
@@ -64,14 +69,46 @@ function hostRunningQuiz() {
         if(currentQuestion + 1 === quizData.length){
             await hideQuestions(id, quizData)
             await showEndResults()
-            setQuizRunning(false)
         } else {
             setCurrentQuestion(currentQuestion + 1)
+            setQuizAsPending()
         }
     }
 
-    async function previousQuestion(){
-        setCurrentQuestion(currentQuestion - 1)
+    async function showScores(){
+        const scoreData = await getAllParticipantScores(id)
+        setParticipantScores(scoreData)
+
+        if(currentQuestion + 1 === quizData.length){
+            await hideQuestions(id, quizData)
+            await showEndResults()
+        } else {
+            setQuizAsPending()
+        }
+    }
+
+    async function setQuizAsPending(){
+        const quizDocument = firebaseInstance
+        .firestore()
+        .collection('running')
+        .doc(id)
+        
+        await quizDocument.get()
+        .then((doc) => {
+            if(doc.exists && doc.data().isPending !== true){
+                quizDocument.update({
+                    isPending: true
+                })
+                setQuizPending(true)
+            }
+
+            if(doc.exists && doc.data().isPending === true){
+                quizDocument.update({
+                    isPending: false
+                })
+                setQuizPending(false)
+            }
+        })
     }
 
     async function showEndResults(){
@@ -86,34 +123,55 @@ function hostRunningQuiz() {
                 quizDocument.update({
                     isActive: false
                 })
+                setQuizRunning(false)
             }
         })
     }
 
-    async function testValues(){
-        console.log('all data:', quizData)
-        console.log('current q:', currentQuestion)
-        showFirstQ(id, question.id)
-        const filter = quizData.filter(i => {
-            return(i !== question)
-        })
+    function ScoresComponent() {
+        return(
+            <>
+                <h1>Scores</h1>
+                <button onClick={nextQuestion}>Next question</button>
+                {participantScores && participantScores.map((i, index) => {
+                    return(
+                        <p key={index}>{i.id.toUpperCase()}: {i.points} </p>
+                    )
+                })}
+                
+            </>
+        )
+    }
 
-        console.log(filter)
+    function QuestionRunningComponent(){
+        return(
+            <>
+                <h1>Question is</h1>
+                <p>Current question: {JSON.stringify(question)}</p>
+                <button onClick={showScores}>Show scores</button>
+            </>
+        )
     }
 
     return (
         <div>
             {quizRunning ? 
             <>
-                <p>{JSON.stringify(question)}</p>
-                {currentQuestion > 0 ? <button onClick={previousQuestion}>Previous question</button> : ''}
-                <button onClick={nextQuestion}>Next question</button>
-                <button onClick={testValues}>test</button>
+                {quizPending ? 
+                    <ScoresComponent /> 
+                    : 
+                    <QuestionRunningComponent />
+                }
             </>    
             : 
             <>
                <h2>Quiz over!</h2> 
                <h3>Scores:</h3>
+               {participantScores && participantScores.map((i, index) => {
+                   return(
+                    <p key={index}>{i.id.toUpperCase()}: {i.points}</p>
+                   )
+               })}
                <button>End quiz</button>
                
             </>
@@ -124,7 +182,26 @@ function hostRunningQuiz() {
 
 export default hostRunningQuiz;
 
-/**useEffect(() => {
+/**
+    async function previousQuestion(){
+        setCurrentQuestion(currentQuestion - 1)
+    }
+ * 
+ * <button onClick={testValues}>test</button>
+ * 
+ *     async function testValues(){
+        console.log('all data:', quizData)
+        console.log('current q:', currentQuestion)
+        showFirstQ(id, question.id)
+        const filter = quizData.filter(i => {
+            return(i !== question)
+        })
+
+        console.log(filter)
+    }
+ * {currentQuestion > 0 ? <button onClick={previousQuestion}>Previous question</button> : ''}
+ * 
+ * useEffect(() => {
     if(user){
         getData(user.uid, id)
     }

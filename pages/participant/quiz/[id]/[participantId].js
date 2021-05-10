@@ -15,6 +15,7 @@ function ParticipantQuizView() {
     const { id, participantId } = router.query;
     const [screenLocked, setScreenLocked] = useState(true)
     const [quizRunning, setQuizRunning] = useState(true)
+    const [quizPending, setQuizPending] = useState(null)
     const [userPoints, setUserPoints] = useState(0)
     const [userFeedBack, setUserFeedBack] = useState('')
     const [data, setData] = useState([])
@@ -75,7 +76,6 @@ function ParticipantQuizView() {
                     if(doc.data().isActive === false){
                         setQuizRunning(false)
                         setScreenLocked(true)
-                        setUserFeedBack('Quiz over!')
                         console.log('quiz is no longer active')
 
                     } else {
@@ -101,6 +101,10 @@ function ParticipantQuizView() {
                 } 
             })  
         } 
+
+        return quizDocument.onSnapshot((snapshot) => {
+            setQuizPending(snapshot.data().isPending)
+        })
     }, [id])
 
     useEffect(() => {
@@ -127,19 +131,17 @@ function ParticipantQuizView() {
         }
     }
 
-    function Loading(){
+    function LoadingComponent(){
         return (
             <>
-                <p>{userFeedBack}</p>
-                <p>{userPoints}</p>
+                {quizPending ? <p>Your points so far: {userPoints}</p> : <p>{userFeedBack}</p>}
             </>
         )
     }
-    
-    function ShowOptons(){
+
+    function ShowOptionsComponent(){
         return(
             <div>
-                {JSON.stringify(userPoints)}
                 {data && data.map((i, index) => {
                     return(
                         <div key={index}> 
@@ -156,8 +158,8 @@ function ParticipantQuizView() {
     }
     return (
         <main>
-
-            {screenLocked ? <Loading /> : <ShowOptons />}
+            {screenLocked ? <LoadingComponent /> : <ShowOptionsComponent />}
+            {!quizRunning ? <p>Quiz over! Final points: {userPoints}</p> : ''}
         </main>
     );
 }

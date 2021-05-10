@@ -69,6 +69,8 @@ export async function createQuizDocument(userId, quizPin, quizName) {
   .set({
     quizPin: quizPin,
     quizName: quizName,
+    isActive: false,
+    isWaitingRoomActive: true
   }, {merge: true})
 
 }
@@ -97,6 +99,8 @@ export async function addQuestionToDocument(
       }, {merge: true})
 }
 
+//======================== EDIT QUIZ DATA
+
 export async function updateQuestionData(userId, quizPin, questionId, values){
   await userCollection
   .doc(userId)
@@ -114,6 +118,17 @@ export async function updateQuestionData(userId, quizPin, questionId, values){
         },
       correctAnswers: values.correctAnswers
       }, {merge: true})
+}
+
+export async function activateQuiz(userId, quizPin){
+  await userCollection
+  .doc(userId)
+  .collection('quizes')
+  .doc(quizPin)
+  .update({
+    isActive: true,
+    isWaitingRoomActive: false
+  }, {merge: true})
 }
 
 //======================EXTRACT QUIZDATA
@@ -206,8 +221,60 @@ export async function countCollection(user, quizPin){
             array.push(snap.size)
         })
     return(array)
+}
+
+export async function resetQuiz(userId, quizPin) {
+try {
+
+  await userCollection
+  .doc(userId)
+  .collection('quizes')
+  .doc(quizPin)
+  .update({
+    isWaitingRoomActive: true
+  })
+
+
+  const collection = await firebaseInstance
+  .firestore()
+  .collection('running')
+  .doc(quizPin)
+  .collection('participants')
+  .get()
+  
+  let array = []
+
+  collection.forEach(i => {
+    array.push({
+      id: i.id,
+      ...i.data()
+    })
+  })
+
+  return deleteEachUserAnswers(quizPin, array)
+  } catch(error){
+    console.log('error when reseting quiz')
+}
 
 }
+
+async function deleteEachUserAnswers(quizPin, participants){
+  
+  const collection = await firebaseInstance
+  .firestore()
+  .collection('running')
+  .doc(quizPin)
+  .collection('participants')
+
+  await participants.forEach((i, index) => {
+    collection.doc(i.id)
+    .set({
+      isPlaying: false
+    })
+  })
+
+}
+
 
 //==========================SHOW PARTICIPANT QUIZDATA
 
@@ -246,6 +313,7 @@ export async function addTitleToRunningQuiz(quizPin, selectedQuizTitle){
     title: selectedQuizTitle,
     isActive: true,
     isPending: false,
+    isWaitingRoomActive: true,
   }, {merge: true})
 
 }
@@ -305,7 +373,8 @@ export async function addParticipantToRunningQuiz(quizPin, userNickname) {
     } else {
       document.set({
         id: userNickname,
-        points: 0
+        points: 0,
+        isPlaying: true,
       }, {merge: true})
     }
   })
@@ -391,6 +460,7 @@ export async function getAllParticipantScores(quizPin){
     const participantData = await runningCollection
     .doc(quizPin)
     .collection('participants')
+    .where('isPlaying', '==', 'true')
     .get()
       
       const array = []
@@ -403,6 +473,7 @@ export async function getAllParticipantScores(quizPin){
       })
 
       return(array)
+
   } catch(error){
     console.log('error when collection participant scores', error)
   }

@@ -13,11 +13,14 @@ function ParticipantQuizView() {
 
     const router = useRouter()
     const { id, participantId } = router.query;
+
     const [screenLocked, setScreenLocked] = useState(true)
     const [quizRunning, setQuizRunning] = useState(true)
     const [quizPending, setQuizPending] = useState(null)
+    
     const [userPoints, setUserPoints] = useState(0)
     const [userFeedBack, setUserFeedBack] = useState('')
+    
     const [data, setData] = useState([])
 
     useEffect(() => {
@@ -29,17 +32,16 @@ function ParticipantQuizView() {
         .doc(participantId)
 
         async function getParticipantData(){
-
             await participantDocument.collection('answers')
             .doc(data[0].id)
             .get()
             .then((doc) => {
-                if (doc.exists){
-                    console.log('dokumentet eksisterer')
+                if (doc.exists && doc.data().isPlaying){
+                    console.log('User has already submitted answer')
                     setScreenLocked(true)
                     setUserFeedBack('You have already answered!')
                 } else {
-                    console.log('dokumentet eksisterer ikke')
+                    console.log('User has not answered this q before')
                     setScreenLocked(false)
                 }
             })
@@ -72,7 +74,6 @@ function ParticipantQuizView() {
             quizDocument.get()
             .then((doc) => {
                 if(doc.exists){
-
                     if(doc.data().isActive === false){
                         setQuizRunning(false)
                         setScreenLocked(true)
@@ -104,6 +105,7 @@ function ParticipantQuizView() {
 
         return quizDocument.onSnapshot((snapshot) => {
             setQuizPending(snapshot.data().isPending)
+            setQuizRunning(snapshot.data().isActive)
         })
     }, [id])
 

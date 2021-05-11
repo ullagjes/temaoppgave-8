@@ -67,6 +67,7 @@ export async function createQuizDocument(userId, quizPin, quizName) {
   .collection('quizes')
   .doc(quizPin)
   .set({
+    count: 0,
     quizPin: quizPin,
     quizName: quizName,
     isActive: false,
@@ -120,15 +121,16 @@ export async function updateQuestionData(userId, quizPin, questionId, values){
       }, {merge: true})
 }
 
-export async function activateQuiz(userId, quizPin){
-  await userCollection
-  .doc(userId)
-  .collection('quizes')
+export async function activateQuiz(quizPin){
+  await firebaseInstance
+  .firestore()
+  .collection('running')
   .doc(quizPin)
   .update({
-    isActive: true,
-    isWaitingRoomActive: false
-  }, {merge: true})
+        isActive: true,
+        isWaitingRoomActive: false
+      }, {merge: true})
+  
 }
 
 //======================EXTRACT QUIZDATA
@@ -231,6 +233,7 @@ try {
   .collection('quizes')
   .doc(quizPin)
   .update({
+    count: 0,
     isWaitingRoomActive: true
   })
 
@@ -311,6 +314,7 @@ export async function addTitleToRunningQuiz(quizPin, selectedQuizTitle){
   .doc(quizPin)
   .set({
     title: selectedQuizTitle,
+    count: 0,
     isActive: true,
     isPending: false,
     isWaitingRoomActive: true,
@@ -457,10 +461,12 @@ export async function updateUserPoints(quizPin, userNickname, points) {
 
 export async function getAllParticipantScores(quizPin){
   try {
-    const participantData = await runningCollection
+    const participantData = await firebaseInstance
+    .firestore()
+    .collection('running')
     .doc(quizPin)
     .collection('participants')
-    .where('isPlaying', '==', 'true')
+    .where("isPlaying", "==", true)
     .get()
       
       const array = []
@@ -471,7 +477,7 @@ export async function getAllParticipantScores(quizPin){
           ...item.data()
         })
       })
-
+      console.log('participant scores', array)
       return(array)
 
   } catch(error){

@@ -4,6 +4,9 @@ import firebaseInstance from '../utils/firebase';
 import { createQuizPin } from '../utils/firebaseHelpers'
 import React, {useState, useEffect} from 'react';
 import { useAuth } from '../context/authContext';
+
+import { PageContainer } from '../components/BaseComponents';
+
 export default function Home() {
 
   //TODO: Activate createQuizPin and add pin to firestore data
@@ -20,11 +23,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
+      <PageContainer>
         <h1>Heisann!</h1>
         <button onClick={createQuizPin}>Test</button>
         <p>{JSON.stringify(isAuthenticated, null, 2)}</p>
-      </main>
+      </PageContainer>
 
       <footer className={styles.footer}>
       </footer>

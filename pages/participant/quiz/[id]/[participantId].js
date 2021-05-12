@@ -17,7 +17,7 @@ function ParticipantQuizView() {
     const [screenLocked, setScreenLocked] = useState(true)
     const [quizRunning, setQuizRunning] = useState(true)
     const [quizPending, setQuizPending] = useState(null)
-    
+    const [waitingRoomActive, setWaitingRoomActive] = useState(null)
     const [userPoints, setUserPoints] = useState(0)
     const [userFeedBack, setUserFeedBack] = useState('')
     
@@ -74,11 +74,17 @@ function ParticipantQuizView() {
             quizDocument.get()
             .then((doc) => {
                 if(doc.exists){
+                    
                     if(doc.data().isActive === false){
                         setQuizRunning(false)
                         setScreenLocked(true)
                         console.log('quiz is no longer active')
 
+                    } if(doc.data().isWaitingRoomActive){
+                        setWaitingRoomActive(true)
+                        console.log('currently waiting for quiz to start')
+                    } if(doc.data().isPending){
+                        setScreenLocked(true)
                     } else {
                         const sorted = quizDocument.collection('questions')
                         .where('isSelected', '==', true)
@@ -95,10 +101,10 @@ function ParticipantQuizView() {
         
                             setData(array)
                             setScreenLocked(false)
+                            if(array.length < 0){setWaitingRoomActive(false)}
                             setUserFeedBack('')
                         })
                     }
-                    
                 } 
             })  
         } 
@@ -160,8 +166,12 @@ function ParticipantQuizView() {
     }
     return (
         <main>
-            {screenLocked ? <LoadingComponent /> : <ShowOptionsComponent />}
-            {!quizRunning ? <p>Quiz over! Final points: {userPoints}</p> : ''}
+            {JSON.stringify(waitingRoomActive)}
+            {waitingRoomActive ? <p>Waiting for quiz to start </p> : 
+            <>
+                {screenLocked ? <LoadingComponent /> : <ShowOptionsComponent />}
+                {!quizRunning ? <p>Quiz over! Final points: {userPoints}</p> : ''}
+            </>}
         </main>
     );
 }

@@ -225,36 +225,37 @@ export async function countCollection(user, quizPin){
     return(array)
 }
 
-export async function resetQuiz(userId, quizPin) {
+export async function resetQuiz(quizPin) {
 try {
 
-  await userCollection
-  .doc(userId)
-  .collection('quizes')
+  await runningCollection
   .doc(quizPin)
   .update({
     count: 0,
-    isWaitingRoomActive: true
+    isActive: false,
+    isPending: false,
+    isWaitingRoomActive: true,
+    hasEnded: true
   })
 
 
-  const collection = await firebaseInstance
-  .firestore()
-  .collection('running')
-  .doc(quizPin)
-  .collection('participants')
-  .get()
+  // const collection = await firebaseInstance
+  // .firestore()
+  // .collection('running')
+  // .doc(quizPin)
+  // .collection('participants')
+  // .get()
   
-  let array = []
+  // let array = []
 
-  collection.forEach(i => {
-    array.push({
-      id: i.id,
-      ...i.data()
-    })
-  })
+  // collection.forEach(i => {
+  //   array.push({
+  //     id: i.id,
+  //     ...i.data()
+  //   })
+  // })
 
-  return deleteEachUserAnswers(quizPin, array)
+  // return deleteEachUserAnswers(quizPin, array)
   } catch(error){
     console.log('error when reseting quiz')
 }
@@ -318,6 +319,7 @@ export async function addTitleToRunningQuiz(quizPin, selectedQuizTitle){
     isActive: true,
     isPending: false,
     isWaitingRoomActive: true,
+    hasEnded: false,
   }, {merge: true})
 
 }

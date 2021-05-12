@@ -1,17 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { useAuth } from '../../context/authContext';
-import { 
-    activateQuiz,
-    checkForQuizData, 
-    hideQuestions, 
-    getAllParticipantScores, 
-    resetQuiz,
-    showCurrentQuestion 
-} from '../../utils/firebaseHelpers';
+import { resetQuiz } from '../../utils/firebaseHelpers';
 import firebaseInstance from '../../utils/firebase';
-import next from 'next';
 
 //TODO: check firestore data for quizrunning instead of usestate
 
@@ -22,6 +14,7 @@ function hostRunningQuiz() {
     const { id } = router.query;
     const { user } = useAuth();
 
+    //COUNTER USED IN REAL TIME DATA UPDATES
     const [counting, setCounting] = useState(0)
 
     //FOR QUIZTITLE, WAITINGROOM AND PENDING
@@ -33,7 +26,8 @@ function hostRunningQuiz() {
 
     //PARTICIPANT DATA
     const [participants, setParticipants] = useState([])
-
+    const [participantsByScore, setParticipantsByScore] = useState([])
+    
     //FOR ALL QUESTIONS AND REALTIME DATA
     const [allQs, setAllQs] = useState([])
     const [realTimeQ, setRealTimeQ] = useState([])
@@ -51,7 +45,7 @@ function hostRunningQuiz() {
     useEffect(() => {
         //ALL DATA FROM RUNNING COLLECTION
         getQuizData()
-        //REALTIME DATA
+        //REALTIME DATA FUNCTIONS
         getCurrentQ()
         getParticipantData()
         getQCounter()
@@ -64,17 +58,13 @@ function hostRunningQuiz() {
     }, [counting])
 
     useEffect(() => {
-        //updateCountInFirestore()
         if(allQs.length !== 0){
             updateCountInFirestore(allQs[currentQ])
         }
-        
-        
     }, [allQs, currentQ])
 
     //UPDATES STATE FOR PENDING AND WAITING ROOM IF USER REFRESHES PAGE
     useEffect(() => {
-        
         if(allQuizData){
             if(allQuizData.isWaitingRoomActive){
                 setWaitingRoomActive(true)
@@ -84,11 +74,25 @@ function hostRunningQuiz() {
                 setWaitingRoomActive(false)
             }
             if(allQuizData.isPending){
-                setQuizPending(false)
-                console.log('pending status initially true')
-            } else {
-                console.log('pending status intially not true')
                 setQuizPending(true)
+                console.log('pending status initially false')
+            } else {
+                console.log('pending status intially not false')
+                setQuizPending(false)
+            }
+            if(allQuizData.isActive){
+                setQuizRunning(true)
+                console.log('quiz is active')
+            } else {
+                setQuizRunning(false)
+                console.log('quiz is not active')
+            }
+            if(allQuizData.hasEnded){
+                setQuizEnded(true)
+                console.log('ended')
+            } else {
+                setQuizEnded(false)
+                console.log('still in play')
             }
         }
     }, [allQuizData])
@@ -116,6 +120,7 @@ function hostRunningQuiz() {
         }, {merge: true})
         
         setQuizPending(true)
+        
     }
 
     //SETS PENDING BOOLEAN TO FALSE IN FIRESTORE
@@ -128,7 +133,7 @@ function hostRunningQuiz() {
         setQuizPending(false)
     }
 
-    //GET ALL DATA 
+    //GET ALL DATA FROM CURRENT QUIZ 
     async function getQuizData(){
         const docRef = await runningQuizDocument
         .get()
@@ -149,6 +154,7 @@ function hostRunningQuiz() {
         setAllQs(array)
     }
 
+    //SYNCS COUNTER STATE WITH COUNTER IN FIRESTORE
     async function getQCounter(){
         await runningQuizDocument
         .get()
@@ -159,6 +165,7 @@ function hostRunningQuiz() {
         })
     }
 
+    //SYNCS FIRESTORE WITH COUNTER STATE
     async function updateCountInFirestore(){
         await runningQuizDocument
         .update({
@@ -202,7 +209,10 @@ function hostRunningQuiz() {
                     ...i.data()
                 })
             })
-            setParticipants(array)
+            let filterByHighest = array.sort(function (a, b) {
+                return b.points - a.points
+            })
+            setParticipants(filterByHighest)
         })
     }
 
@@ -230,6 +240,13 @@ function hostRunningQuiz() {
         })
     }
 
+    //END QUIZ RESET STATES AND FIRESTORE COLLECTION
+    async function endQuiz(){
+        await resetQuiz(id)
+        router.push('/')
+    }
+
+    //UPDATES WHICH QUESTION WILL BE VISIBLE THROUGH REAL TIME DATA
     async function nextQ(){
         if(currentQ < allQs.length){
             setCurrentQ(currentQ + 1)
@@ -238,16 +255,20 @@ function hostRunningQuiz() {
             undoPending()
         } else {
             console.log('the end')
+            await runningQuizDocument
+            .update({
+                hasEnded: true
+            }, {merge: true})
             setQuizEnded(true)
         }
     }
 
     function WaitingRoomComponent(){
         return(
+            
             <div>
                 <h1>Use PINCODE: {id} to join the quiz!</h1>
                 <p>Waiting for participants...</p>
-                {JSON.stringify(counting)}
                 {participants && participants.map((i, index) => {
                     return(
                         <p key={index}>{i.id}</p>
@@ -258,17 +279,92 @@ function hostRunningQuiz() {
         )
     }
 
+    function ShowOptionsComponent(){
+        return(
+            <>
+            {realTimeQ.map((i, index) => {
+                return(
+                    <div key={index}>
+                        <h2>{i.title}</h2>
+                        <p>{i.options.a}</p>
+                        <p>{i.options.b}</p>
+                        {i.options.c && <p>{i.options.c}</p>}
+                        {i.options.d && <p>{i.options.d}</p>}
+                        <button onClick={setQuizToPending}>Next</button>
+                    </div>
+                )
+            })}
+            </>
+        )
+    }
+
+    function ShowScoresComponent(){
+        return(
+            <>
+            {realTimeQ.map((i, index) => {
+                return(
+                    <div key={index}>
+                        <h2>{i.title}</h2>
+                        {i.correctAnswers.map((j, index) => {
+                            return(
+                                <div key={index}>
+                                    <p>Correct answer: {j}</p>
+                                </div>
+                                )
+                            })
+                        }
+                        <h2>Scores</h2>
+                        {participants.map((k, index) => {
+                            return(
+                                <div key={index}>
+                                    <h3>{k.id}: {k.points}</h3>
+                                </div>
+                                )
+                            })
+                        }
+                        <button onClick={nextQ}>Next</button>
+                    </div>
+                    )
+                })
+            }
+            </>
+        )
+    }
+
+    function QuizEndedComponent(){
+        return(
+            <>
+                <div>
+                    <h2>Quiz over!</h2>
+                    {participants.map((k, index) => {
+                            return(
+                                <div key={index}>
+                                    <h3>{k.id}: {k.points}</h3>
+                                </div>
+                            )
+                        })
+                    }
+                    <button onClick={endQuiz}>End quiz</button>
+                </div>
+            </>
+        )
+    }
+
+    function NoQuizRunningComponent(){
+        return(
+            <>
+            <p>No quiz here!</p>
+            </>
+        )
+    }
 
     return(
         <>
-       <button onClick={updateCountInFirestore}>test</button>
-        {JSON.stringify(waitingRoomAcitve)}
-        {JSON.stringify(quizPending)}
-        {JSON.stringify(realTimeQ)}
-        <p>current q</p>{JSON.stringify(currentQ)}
-        <p>counter</p>{JSON.stringify(counting)}
-        <button onClick={setQuizToPending}>Pending</button>
-        <button onClick={nextQ}>Next</button>
+        {(!quizRunning && quizEnded) ? <NoQuizRunningComponent /> : <>
+        {waitingRoomAcitve ? <WaitingRoomComponent /> : ''}
+        {(quizRunning && !quizPending) ? <ShowOptionsComponent /> : ''}
+        {quizPending && !quizEnded ? <ShowScoresComponent /> : ''}
+        {quizEnded ? <QuizEndedComponent /> : ''}</>}
         </>
     )
 }

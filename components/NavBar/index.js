@@ -5,6 +5,9 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../context/authContext';
 import { handleSignOut } from '../../utils/firebaseHelpers';
 
+import NavBarComponent from './NavBarComponent'
+import { NavLink } from '../BaseComponents';
+
 function NavBar() {
 
     const { user, isAuthenticated, loading } = useAuth();
@@ -21,19 +24,19 @@ function NavBar() {
     };
 
     return (
-        <nav>
+        <NavBarComponent>
             <Link href='/createquiz'>
-                <a>Create</a>
+                <NavLink>Create</NavLink>
             </Link>
             <Link href='/quizmaster/library'>
-                <a>Library</a>
+                <NavLink>Library</NavLink>
             </Link>
             <Link href='/quizmaster/profile'>
-                <a>Profile</a>
+                <NavLink>Profile</NavLink>
             </Link>
             {user && <button onClick={handleSignOut}>Sign out</button>}
             {!user && <Link href='/login'><a>Sign in</a></Link>}
-        </nav>
+        </NavBarComponent>
     );
 }
 

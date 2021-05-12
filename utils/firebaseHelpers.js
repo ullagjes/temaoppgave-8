@@ -401,14 +401,18 @@ export async function submitAnswerToFireStore(quizPin, userNickname, questionId,
   
   const currentAnswer = userAnswers.doc(questionId)
   
-  await currentAnswer.get()
+  let isAnswered = await currentAnswer.get()
   .then((doc) => {
     if(doc.exists){
       alert('Question is already answered!')
+      return true
     } else {
       currentAnswer.set({answer: answer}, {merge: true})
+      return false
     }
   })
+
+  return isAnswered
 
 }
 

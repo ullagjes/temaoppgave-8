@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../context/authContext';
 import firebaseInstance from '../../utils/firebase';
 
-import NavBar from '../../components/NavBar';
 import QuizForm from '../../components/QuizForm';
 
 function CreateNewQuiz() {
@@ -54,7 +53,7 @@ function CreateNewQuiz() {
   
     return (
         <>
-            <NavBar />
+            
             <button onClick={handleOpen}>Create new quiz</button>
             {toggle ? 
                 <QuizForm 

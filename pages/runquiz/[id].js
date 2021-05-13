@@ -5,6 +5,11 @@ import { useAuth } from '../../context/authContext';
 import { resetQuiz } from '../../utils/firebaseHelpers';
 import firebaseInstance from '../../utils/firebase';
 
+
+import WaitingroomComponent from '../../components/PageComponents/WaitingroomComponent';
+
+import { ShowOptionsComponent } from '../../components/PageComponents/ShowOptionsComponent';
+
 //TODO: check firestore data for quizrunning instead of usestate
 
 function hostRunningQuiz() {
@@ -267,47 +272,54 @@ function hostRunningQuiz() {
         return(
             
             <div>
-                <h1>Use PINCODE: {id} to join the quiz!</h1>
-                <p>Waiting for participants...</p>
-                {participants && participants.map((i, index) => {
-                    return(
-                        <p key={index}>{i.id}</p>
-                    )
-                })}
-                <button onClick={startQuiz}>Start quiz!</button>
+                <WaitingroomComponent 
+                    pinCode={id}
+                    participants={participants}
+                    onClick={startQuiz}
+                />
             </div>
         )
     }
 
-    function ShowOptionsComponent(){
+    function ShowOptions(){
         return(
             <>
             {realTimeQ.map((i, index) => {
-                return(
-                    <div key={index}>
-                        <h2>{i.title}</h2>
-                        <p>{i.options.a}</p>
-                        <p>{i.options.b}</p>
-                        {i.options.c && <p>{i.options.c}</p>}
-                        {i.options.d && <p>{i.options.d}</p>}
-                        <button onClick={setQuizToPending}>Next</button>
-                    </div>
-                )
-            })}
+                console.log(i)
+                return (
+                    <ShowOptionsComponent 
+                    key={index}
+                    title={i.title}
+                    optionOne={i.options.option_one}
+                    optionTwo={i.options.option_two}
+                    optionThree={i.options.option_three}
+                    optionFour={i.options.option_four}
+                    onClick={setQuizToPending}
+                    />
+                    )
+                })
+            }
             </>
         )
     }
 
     function ShowScoresComponent(){
         return(
+            
             <>
             {realTimeQ.map((i, index) => {
+                
                 return(
+                    
                     <div key={index}>
+                        
                         <h2>{i.title}</h2>
                         {i.correctAnswers.map((j, index) => {
+                           const filteredByValue = Object.fromEntries(
+                            Object.entries(i.options).filter(([key, value]) => key === j) )
                             return(
                                 <div key={index}>
+                                    <p>{JSON.stringify(filteredByValue)}</p>
                                     <p>Correct answer: {j}</p>
                                 </div>
                                 )
@@ -360,11 +372,15 @@ function hostRunningQuiz() {
 
     return(
         <>
-        {(!quizRunning && quizEnded) ? <NoQuizRunningComponent /> : <>
-        {waitingRoomAcitve ? <WaitingRoomComponent /> : ''}
-        {(quizRunning && !quizPending) ? <ShowOptionsComponent /> : ''}
-        {quizPending && !quizEnded ? <ShowScoresComponent /> : ''}
-        {quizEnded ? <QuizEndedComponent /> : ''}</>}
+        {(!quizRunning && quizEnded) ? <NoQuizRunningComponent /> 
+        : 
+        <>
+            {waitingRoomAcitve ? <WaitingRoomComponent /> : ''}
+            {(quizRunning && !quizPending) ? <ShowOptions /> : ''}
+            {quizPending && !quizEnded ? <ShowScoresComponent /> : ''}
+            {quizEnded ? <QuizEndedComponent /> : ''}
+        </>
+        }
         </>
     )
 }

@@ -91,10 +91,10 @@ export async function addQuestionToDocument(
       id: `question_${counter}`,
       title: values.title,
       options: {
-          a: values.option_one,
-          b: values.option_two,
-          c: values.option_three,
-          d: values.option_four,
+          option_one: values.option_one,
+          option_two: values.option_two,
+          option_three: values.option_three,
+          option_four: values.option_four,
         },
       correctAnswers: values.correctAnswers
       }, {merge: true})
@@ -296,10 +296,10 @@ export async function addQuizToRunningCollection(quizPin, selectedQuizData){
       id: i.id,
       title: i.title,
       options: {
-        a: i.options.a,
-        b: i.options.b,
-        c: i.options.c,
-        d: i.options.d,
+        option_one: i.options.a,
+        option_two: i.options.b,
+        option_three: i.options.c,
+        option_four: i.options.d,
       },
       correctAnswers: i.correctAnswers,
       isSelected: false

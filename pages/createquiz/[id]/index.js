@@ -13,8 +13,23 @@ import {
     getQuizTitle 
 } from '../../../utils/firebaseHelpers';
 
-import NavBar from '../../../components/NavBar';
+import Grid from '@material-ui/core/Grid';
+
+import { makeStyles } from '@material-ui/core/styles';
+import { SubTitle, ButtonComponent, TextElement } from '../../../components/BaseComponents';
+import { ShowOptionsComponent } from '../../../components/PageComponents/ShowOptionsComponent';
+import ListItem from '../../../components/PageComponents/ListItem';
 import QuestionForm from '../../../components/QuestionForm';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+        maxWidth: '720px',
+    },
+    titleContainer: {
+        margin: theme.spacing(3),
+    }
+}))
 
 function createQuestions () {
 
@@ -22,6 +37,8 @@ function createQuestions () {
     
     const router = useRouter();
     const { id } = router.query
+
+    const classes = useStyles();
 
     const [selectedQuizData, setSelectedQuizData] = useState([])
     const [selectedQuizTitle, setSelectedQuizTitle] = useState([])
@@ -74,48 +91,58 @@ function createQuestions () {
         router.push(`/runquiz/${id}`)
     }
 
-    function testValues(){
-        console.log(selectedQuizData[0])
-    }
-
     return (
         <>  
-            <NavBar />
-            <div>
-                {JSON.stringify(counter)}
-                <button onClick={testValues}>test</button>
-                <h1>{selectedQuizTitle}</h1>
+        
+            <div className={classes.root}>
+                <div className={classes.titleContainer}>
+
+                    <Grid 
+                        container
+                        direction="row"
+                    >
+                        <Grid item xs={12}>
+                                    <SubTitle component={"h1"}>{selectedQuizTitle}</SubTitle>
+                                </Grid>
+                        <Grid item xs={6} sm={3}>
+                            <ButtonComponent onClick={createNewQuestion}>Add question</ButtonComponent>
+                            {toggle ? 
+                                <QuestionForm 
+                                    quizPin={id} 
+                                    counter={counter} 
+                                    onSubmit={addQuestionToFiresTore} 
+                                    initialValues={{
+                                        title: '',
+                                        option_one: '',
+                                        option_two: '',
+                                        option_three: '',
+                                        option_four: '',
+                                        correctAnswers: [],
+                                    }}
+                                /> 
+                            : ''}
+                        </Grid>
+                        <Grid item xs={6} sm={3}>
+                            <ButtonComponent onClick={startQuiz}>Run quiz!</ButtonComponent>
+                        </Grid>
+                    </Grid>    
+                </div>
                 <div>
                     {selectedQuizData && selectedQuizData.map((i, index) => {
                         return (
-                            <Link href={`${id}/${i.id}/`} key={index}>
-                                <a>
-                                    <div>
-                                        <h2>{i.title}</h2>
-                                    </div>    
-                                </a>
-                            </Link>
+                            <ListItem 
+                                key={index}
+                                title={i.title}
+                                ariaLabelEdit={'Click to edit question'}
+                                handleEdit={() => router.push(`/createquiz/${id}/${i.id}`)}
+                            />
+                            
                         )
                     })}
                 </div>
-                <button onClick={createNewQuestion}>Add question</button>
-                {toggle ? 
-                    <QuestionForm 
-                        quizPin={id} 
-                        counter={counter} 
-                        onSubmit={addQuestionToFiresTore} 
-                        initialValues={{
-                            title: '',
-                            option_one: '',
-                            option_two: '',
-                            option_three: '',
-                            option_four: '',
-                            correctAnswers: [],
-                        }}
-                    /> 
-                : ''}
-            </div>
-            <button onClick={startQuiz}>Run quiz!</button>
+            </div>    
+                
+                
         </>
     );
 }

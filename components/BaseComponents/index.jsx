@@ -1,15 +1,80 @@
-import styled from 'styled-components'
 
-export const NavLink = styled.a`
-    color: ${props => props.theme.colors.contrastLight}; 
-`
-export const PageContainer = styled.main`
-    background-color: ${props => props.theme.colors.dark};
-    color: ${props => props.theme.colors.light};
-    height: 100vh;
-    width: 100vw;
+import { Button } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
 
-`
+export function HeadLine({children}){
+    return(
+        <Typography
+            component="h1" 
+            variant="h1"
+        >
+            {children}
+        </Typography>
+    )
+}
+
+export function SubTitle({children, component}){
+    return(
+        <Typography
+            component={component}
+            variant="h2"
+        >
+            {children}
+        </Typography>
+    )
+}
+
+export function UnderTitle({children, component}){
+    return(
+        <Typography
+            component={component} 
+            variant="h4"
+        >
+            {children}
+        </Typography>
+    )
+}
+
+export function TextElement({children, style}){
+    return(
+        <Typography
+            variant="body1"
+            color='textPrimary'
+        >
+            {children}
+        </Typography>
+    )
+}
+
+export function LinkComponent({children, href}){
+    return(
+        <Typography component="h6" variant="h6">
+
+            <Link
+                href={href}
+                color="secondary"
+            >
+                {children}
+            </Link>
+        </Typography>
+    )
+}
+
+export function ButtonComponent({children, onClick, size}){
+    return(
+        <Button 
+        variant="contained" 
+        color="secondary" 
+        onClick={onClick}
+        size={size}
+        >
+            {children}
+        </Button>
+    )
+}
+
+
 /*${props => props.theme.colors.primary} */
 /*${props => props.theme.colors.dark} */
 /*${props => props.theme.colors.light} */

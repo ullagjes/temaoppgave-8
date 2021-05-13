@@ -5,7 +5,9 @@ import { createQuizPin } from '../utils/firebaseHelpers'
 import React, {useState, useEffect} from 'react';
 import { useAuth } from '../context/authContext';
 
-import { PageContainer } from '../components/BaseComponents';
+import {  ButtonComponent, HeadLine, SubTitle, TextElement, UnderTitle, PageContainer, LinkComponent } from '../components/BaseComponents';
+import ListItem from '../components/PageComponents/ListItem';
+import ShowScoresComponent from '../components/PageComponents/ShowScoresComponent';
 
 export default function Home() {
 
@@ -17,19 +19,37 @@ export default function Home() {
   
   return (
 
-    <div className={styles.container}>
+    <div>
       <Head>
-        <title>Create Next App</title>
+        <title>Welcome to Kashoot</title>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
+      <>
+      </>
+      <>
+        <HeadLine>Headline</HeadLine>
+        <SubTitle>Subtitle</SubTitle>
+        <UnderTitle>Undertitle</UnderTitle>
+        <TextElement style={'main'}>This is some text.</TextElement>
+        <br></br>
+        <TextElement style={'secondary'}>This is secondary text.</TextElement>
+        <br></br>
+        <ButtonComponent size={'large'}>Button</ButtonComponent>
+        <LinkComponent href={"#"}>Click me!</LinkComponent>
+        <ListItem 
+          title={'Question'} 
+          ariaLabelEdit={'Press to edit'} 
+          ariaLabelDelete={'Press to delete question from quiz'}
+          handleEdit={() => console.log('edited')} 
+          handleDelete={() => console.log('deleted')} 
+          />
+      </>
+      
 
-      <PageContainer>
-        <h1>Heisann!</h1>
-        <button onClick={createQuizPin}>Test</button>
-        <p>{JSON.stringify(isAuthenticated, null, 2)}</p>
-      </PageContainer>
-
-      <footer className={styles.footer}>
+      <footer>
       </footer>
     </div>
   )

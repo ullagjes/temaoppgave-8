@@ -1,15 +1,15 @@
-import styled from 'styled-components'
+// import styled from 'styled-components'
 
-const NavBarComponent = styled.nav`
-    display: flex;
-    width: 100%;
-    justify-content: space-around;
-    background-color: ${props => props.theme.colors.dark};
-    width: 100%;
-    display: flex;
-`
+// const NavBarComponent = styled.nav`
+//     display: flex;
+//     width: 100%;
+//     justify-content: space-around;
+//     background-color: ${props => props.theme.colors.dark};
+//     width: 100%;
+//     display: flex;
+// `
 
-export default NavBarComponent;
+// export default NavBarComponent;
 
 /*${props => props.theme.colors.primary} */
 /*${props => props.theme.colors.dark} */

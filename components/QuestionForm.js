@@ -12,8 +12,6 @@ const schema = Yup.object().shape({
 });
 
 function QuestionForm({ initialValues, onSubmit }) {
-    
-    
 
     return (
         <Formik

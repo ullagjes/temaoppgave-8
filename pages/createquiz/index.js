@@ -5,6 +5,8 @@ import { useAuth } from '../../context/authContext';
 import firebaseInstance from '../../utils/firebase';
 
 import QuizForm from '../../components/QuizForm';
+import PageContainer from '../../components/PageComponents/PageContainer';
+import { ButtonComponent } from '../../components/BaseComponents';
 
 function CreateNewQuiz() {
 
@@ -12,7 +14,6 @@ function CreateNewQuiz() {
     const { user, isAuthenticated, loading } = useAuth();
     const [userId, setUserId] = useState(null)
     const [newQuizPin, setNewQuizPin] = useState(null)
-
     const [toggle, setToggle] = useState(false)
 
     useEffect(() => {
@@ -52,17 +53,21 @@ function CreateNewQuiz() {
     };
   
     return (
-        <>
-            
-            <button onClick={handleOpen}>Create new quiz</button>
-            {toggle ? 
-                <QuizForm 
-                    quizPin={JSON.stringify(newQuizPin)} 
-                    userId={userId} 
-                    handleClose={handleClose}/> 
-                : null
-            }
-        </>
+        <PageContainer user={user}>
+            <ButtonComponent
+            onClick={handleOpen}
+            size={"large"}
+            >
+                Create new quiz
+            </ButtonComponent>
+                {toggle ? 
+                    <QuizForm 
+                        quizPin={JSON.stringify(newQuizPin)} 
+                        userId={userId} 
+                        handleClose={handleClose}/> 
+                    : null
+                }
+        </PageContainer>
     );
 }
 

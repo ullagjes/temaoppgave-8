@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         backgroundColor: theme.palette.secondary.main,
         padding: theme.spacing(2),
-        maxWidth: '400px',
+        maxWidth: '300px',
         margin: theme.spacing(2),
     },
     details: {

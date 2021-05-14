@@ -1,13 +1,26 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import firebaseInstance from '../utils/firebase';
-import { createQuizPin } from '../utils/firebaseHelpers'
-import React, {useState, useEffect} from 'react';
+
+import React from 'react';
+import { useRouter } from 'next/router';
 import { useAuth } from '../context/authContext';
 
-import {  ButtonComponent, HeadLine, SubTitle, TextElement, UnderTitle, PageContainer, LinkComponent } from '../components/BaseComponents';
-import ListItem from '../components/PageComponents/ListItem';
-import ShowScoresComponent from '../components/PageComponents/ShowScoresComponent';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles'
+
+import {  ButtonComponent, HeadLine, UnderTitle } from '../components/BaseComponents';
+import PageContainer from '../components/PageComponents/PageContainer';
+
+const useStyles = makeStyles((theme) => ({
+  grid: {
+    maxWidth: '1200px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  titleContainer: {
+    textAlign: 'center',
+    color: theme.palette.primary.contrastText,
+  },
+}))
 
 export default function Home() {
 
@@ -16,10 +29,13 @@ export default function Home() {
   
 
   const { user, loading, isAuthenticated } = useAuth();
-  
+  const router = useRouter()
+
+  const classes = useStyles();
+
   return (
 
-    <div>
+    <>
       <Head>
         <title>Welcome to Kashoot</title>
         <link rel="icon" href="/favicon.ico" />
@@ -27,30 +43,30 @@ export default function Home() {
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-      <>
-      </>
-      <>
-        <HeadLine>Headline</HeadLine>
-        <SubTitle>Subtitle</SubTitle>
-        <UnderTitle>Undertitle</UnderTitle>
-        <TextElement style={'main'}>This is some text.</TextElement>
-        <br></br>
-        <TextElement style={'secondary'}>This is secondary text.</TextElement>
-        <br></br>
-        <ButtonComponent size={'large'}>Button</ButtonComponent>
-        <LinkComponent href={"#"}>Click me!</LinkComponent>
-        <ListItem 
-          title={'Question'} 
-          ariaLabelEdit={'Press to edit'} 
-          ariaLabelDelete={'Press to delete question from quiz'}
-          handleEdit={() => console.log('edited')} 
-          handleDelete={() => console.log('deleted')} 
-          />
-      </>
-      
+      <PageContainer>
+        <Grid 
+        container
+        spacing={4}
+        direction='column'
+        alignItems='center'
+        justify='space-evenly'
+        className={classes.grid}
+        >
+          <Grid item xs={12} className={classes.titleContainer}>
+            <HeadLine component={"h1"}>Welcome!</HeadLine>
+            <UnderTitle component={"h2"}>Choose to create or join quiz to get started.</UnderTitle>
+          </Grid>
+          <Grid item xs={12} sm={6}>
 
-      <footer>
-      </footer>
-    </div>
+            <ButtonComponent onClick={() => router.push('/login')} size={"large"}>Create quiz</ButtonComponent>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+
+            <ButtonComponent onClick={() => router.push('/participant')} size={"large"}>Join quiz</ButtonComponent>
+          </Grid>
+        </Grid>
+      </PageContainer>
+
+    </>
   )
 }

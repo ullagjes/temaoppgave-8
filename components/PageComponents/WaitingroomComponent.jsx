@@ -6,7 +6,6 @@ import { ButtonComponent, UnderTitle, TextElement } from '../BaseComponents';
 import ParticipantItem from './ParticipantItem';
 
 function WaitingroomComponent({pinCode, participants, onClick}) {
-    console.log('participantprops', participants)
     return (
         <div>
             <Container maxWidth="lg">

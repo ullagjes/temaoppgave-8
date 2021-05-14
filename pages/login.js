@@ -4,6 +4,9 @@ import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router';
 
+import PageContainer from '../components/PageComponents/PageContainer';
+import { SubTitle } from '../components/BaseComponents';
+
 const validationSchema = Yup.object().shape({
     email: Yup.string().required().min(8).label('Email'),
     password: Yup.string().required().min(8).label('Password'),
@@ -25,27 +28,28 @@ function logIn() {
     
     return (
         <>
-        
-        <h1>Log in</h1>
-            <Formik
-            initialValues= {{
-                email: '',
-                password: '',
-            }}
-            validationSchema={validationSchema} 
-            onSubmit={(values) => onSubmit(values)}
-            >
-                <Form>
-                    <label htmlFor='email'>Email adress</label>
-                    <Field name="email" type="email" placeholder="Email adress"/>
-                    <ErrorMessage name="email" />
-                    <label htmlFor='password'>Password</label>
-                    <Field name="password" type="password"
-                    />
-                    <ErrorMessage name="password" />
-                    <button type="submit">Submit</button>
-                </Form>
-            </Formik>
+        <PageContainer>
+            <SubTitle component={"h1"}>Log in</SubTitle>
+                <Formik
+                initialValues= {{
+                    email: '',
+                    password: '',
+                }}
+                validationSchema={validationSchema} 
+                onSubmit={(values) => onSubmit(values)}
+                >
+                    <Form>
+                        <label htmlFor='email'>Email adress</label>
+                        <Field name="email" type="email" placeholder="Email adress"/>
+                        <ErrorMessage name="email" />
+                        <label htmlFor='password'>Password</label>
+                        <Field name="password" type="password"
+                        />
+                        <ErrorMessage name="password" />
+                        <button type="submit">Submit</button>
+                    </Form>
+                </Formik>
+        </PageContainer>
 
 
         </>

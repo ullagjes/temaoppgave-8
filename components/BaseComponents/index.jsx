@@ -40,20 +40,19 @@ export function TextElement({children, style}){
     return(
         <Typography
             variant="body1"
-            color='textPrimary'
         >
             {children}
         </Typography>
     )
 }
 
-export function LinkComponent({children, href}){
+export function LinkComponent({ classes, children, href}){
     return(
-        <Typography component="h6" variant="h6">
+        <Typography component="div">
 
             <Link
+                className={classes}
                 href={href}
-                color="secondary"
             >
                 {children}
             </Link>

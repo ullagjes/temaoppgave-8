@@ -17,9 +17,9 @@ import Grid from '@material-ui/core/Grid';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { SubTitle, ButtonComponent, TextElement } from '../../../components/BaseComponents';
-import { ShowOptionsComponent } from '../../../components/PageComponents/ShowOptionsComponent';
 import ListItem from '../../../components/PageComponents/ListItem';
 import QuestionForm from '../../../components/QuestionForm';
+import PageContainer from '../../../components/PageComponents/PageContainer';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -92,58 +92,57 @@ function createQuestions () {
     }
 
     return (
-        <>  
-        
-            <div className={classes.root}>
-                <div className={classes.titleContainer}>
+        <PageContainer user={user}>
 
-                    <Grid 
-                        container
-                        direction="row"
-                    >
-                        <Grid item xs={12}>
-                                    <SubTitle component={"h1"}>{selectedQuizTitle}</SubTitle>
-                                </Grid>
-                        <Grid item xs={6} sm={3}>
-                            <ButtonComponent onClick={createNewQuestion}>Add question</ButtonComponent>
-                            {toggle ? 
-                                <QuestionForm 
-                                    quizPin={id} 
-                                    counter={counter} 
-                                    onSubmit={addQuestionToFiresTore} 
-                                    initialValues={{
-                                        title: '',
-                                        option_one: '',
-                                        option_two: '',
-                                        option_three: '',
-                                        option_four: '',
-                                        correctAnswers: [],
-                                    }}
-                                /> 
-                            : ''}
-                        </Grid>
-                        <Grid item xs={6} sm={3}>
-                            <ButtonComponent onClick={startQuiz}>Run quiz!</ButtonComponent>
-                        </Grid>
-                    </Grid>    
-                </div>
-                <div>
-                    {selectedQuizData && selectedQuizData.map((i, index) => {
-                        return (
-                            <ListItem 
-                                key={index}
-                                title={i.title}
-                                ariaLabelEdit={'Click to edit question'}
-                                handleEdit={() => router.push(`/createquiz/${id}/${i.id}`)}
-                            />
-                            
-                        )
-                    })}
-                </div>
-            </div>    
-                
-                
-        </>
+                <div className={classes.root}>
+                    <div className={classes.titleContainer}>
+
+                        <Grid 
+                            container
+                            direction="row"
+                        >
+                            <Grid item xs={12}>
+                                        <SubTitle component={"h1"}>{selectedQuizTitle}</SubTitle>
+                                    </Grid>
+                            <Grid item xs={6} sm={3}>
+                                <ButtonComponent onClick={createNewQuestion}>Add question</ButtonComponent>
+                                {toggle ? 
+                                    <QuestionForm 
+                                        quizPin={id} 
+                                        counter={counter} 
+                                        onSubmit={addQuestionToFiresTore} 
+                                        initialValues={{
+                                            title: '',
+                                            option_one: '',
+                                            option_two: '',
+                                            option_three: '',
+                                            option_four: '',
+                                            correctAnswers: [],
+                                        }}
+                                    /> 
+                                : ''}
+                            </Grid>
+                            <Grid item xs={6} sm={3}>
+                                <ButtonComponent onClick={startQuiz}>Run quiz!</ButtonComponent>
+                            </Grid>
+                        </Grid>    
+                    </div>
+                    <div>
+                        {selectedQuizData && selectedQuizData.map((i, index) => {
+                            return (
+                                <ListItem 
+                                    key={index}
+                                    title={i.title}
+                                    ariaLabelEdit={'Click to edit question'}
+                                    handleEdit={() => router.push(`/createquiz/${id}/${i.id}`)}
+                                />
+                                
+                            )
+                        })}
+                    </div>
+                </div>    
+        </PageContainer>
+        
     );
 }
 

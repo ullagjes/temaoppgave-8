@@ -9,6 +9,11 @@ import firebaseInstance from '../../utils/firebase';
 import WaitingroomComponent from '../../components/PageComponents/WaitingroomComponent';
 
 import { ShowOptionsComponent } from '../../components/PageComponents/ShowOptionsComponent';
+import ShowScoresComponent from '../../components/PageComponents/ShowScoresComponent';
+import PageContainer from '../../components/PageComponents/PageContainer';
+import QuizEndedComponent from '../../components/PageComponents/QuizEndedComponent';
+import { ButtonComponent, SubTitle } from '../../components/BaseComponents';
+import { Container } from '@material-ui/core';
 
 //TODO: check firestore data for quizrunning instead of usestate
 
@@ -270,14 +275,11 @@ function hostRunningQuiz() {
 
     function WaitingRoomComponent(){
         return(
-            
-            <div>
-                <WaitingroomComponent 
-                    pinCode={id}
-                    participants={participants}
-                    onClick={startQuiz}
-                />
-            </div>
+            <WaitingroomComponent 
+                pinCode={id}
+                participants={participants}
+                onClick={startQuiz}
+            />
         )
     }
 
@@ -303,62 +305,29 @@ function hostRunningQuiz() {
         )
     }
 
-    function ShowScoresComponent(){
+    function ShowScores(){
         return(
             
-            <>
-            {realTimeQ.map((i, index) => {
-                
-                return(
-                    
-                    <div key={index}>
-                        
-                        <h2>{i.title}</h2>
-                        {i.correctAnswers.map((j, index) => {
-                           const filteredByValue = Object.fromEntries(
-                            Object.entries(i.options).filter(([key, value]) => key === j) )
-                            return(
-                                <div key={index}>
-                                    <p>{JSON.stringify(filteredByValue)}</p>
-                                    <p>Correct answer: {j}</p>
-                                </div>
-                                )
-                            })
-                        }
-                        <h2>Scores</h2>
-                        {participants.map((k, index) => {
-                            return(
-                                <div key={index}>
-                                    <h3>{k.id}: {k.points}</h3>
-                                </div>
-                                )
-                            })
-                        }
-                        <button onClick={nextQ}>Next</button>
-                    </div>
-                    )
-                })
-            }
-            </>
+            <ShowScoresComponent 
+            participants={participants} 
+            question={realTimeQ}
+            isPending={true}
+            bPxs={12}
+            bPsm={3}
+            onClick={nextQ}
+            />
+            
         )
     }
 
-    function QuizEndedComponent(){
+    function QuizEnded(){
         return(
-            <>
-                <div>
-                    <h2>Quiz over!</h2>
-                    {participants.map((k, index) => {
-                            return(
-                                <div key={index}>
-                                    <h3>{k.id}: {k.points}</h3>
-                                </div>
-                            )
-                        })
-                    }
-                    <button onClick={endQuiz}>End quiz</button>
-                </div>
-            </>
+        <QuizEndedComponent
+        title={'Quiz over!'}
+        subTitle={'Final scores'}
+        participants={participants} 
+        onClick={endQuiz}
+        />
         )
     }
 
@@ -371,17 +340,17 @@ function hostRunningQuiz() {
     }
 
     return(
-        <>
+        <PageContainer>
         {(!quizRunning && quizEnded) ? <NoQuizRunningComponent /> 
         : 
         <>
             {waitingRoomAcitve ? <WaitingRoomComponent /> : ''}
             {(quizRunning && !quizPending) ? <ShowOptions /> : ''}
-            {quizPending && !quizEnded ? <ShowScoresComponent /> : ''}
-            {quizEnded ? <QuizEndedComponent /> : ''}
+            {quizPending && !quizEnded ? <ShowScores /> : ''}
+            {quizEnded ? <QuizEnded /> : ''}
         </>
         }
-        </>
+        </PageContainer>
     )
 }
 

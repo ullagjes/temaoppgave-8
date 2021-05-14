@@ -9,6 +9,8 @@ import {
     submitAnswerToFireStore, 
     updateUserPoints 
 } from '../../../../utils/firebaseHelpers';
+import ShowParticipantOptions from '../../../../components/PageComponents/ShowParticipantOptions';
+import PageContainer from '../../../../components/PageComponents/PageContainer';
 
 function ParticipantQuizView() {
 
@@ -72,8 +74,6 @@ function ParticipantQuizView() {
         }
     }, [quizPending])
 
-
-
     //GET INITIAL DATA FOR QUIZ RUNNING
     async function getAllQuizData() {
         await docRef
@@ -94,7 +94,6 @@ function ParticipantQuizView() {
         return query.onSnapshot((snapshot) => {
             let array = []
             snapshot.forEach(i => {
-                
                 array.push({
                     id: i.id,
                     title: i.data().title,
@@ -137,18 +136,15 @@ function ParticipantQuizView() {
     //ADDS PARTICIPANT ANSWER TO FIREBASE
     //ALSO CHECKS IF USER ALREADY HAS SUBMITTED AN ANSWER
     async function submitAnswer(value){
-        
-            let check = await submitAnswerToFireStore(id, participantId, currentQ[0].id, value)
-            if(value === null){
-                setUserFeedBack('To late!')
-                setScreenLocked(true)
-                return null;
-            } else {
-               await checkIfAnswerCorrect(value, check)
-                setScreenLocked(true) 
-            }
-        
-        
+        let check = await submitAnswerToFireStore(id, participantId, currentQ[0].id, value)
+        if(value === null){
+            setUserFeedBack('To late!')
+            setScreenLocked(true)
+            return null;
+        } else {
+            await checkIfAnswerCorrect(value, check)
+            setScreenLocked(true) 
+        }
     }
 
     //COMPARES PARTICIPANT ANSWER WITH CORRECT ANSWER
@@ -179,33 +175,22 @@ function ParticipantQuizView() {
     function ShowOptionsComponent(){
         return(
             <div>
-                {currentQ && currentQ.map((i, index) => {
-                    return(
-                        <div key={index}> 
-                        <h1>{i.title}</h1>
-                        <button onClick={() => submitAnswer('option_one')}>{i.options.a}</button>
-                        <button onClick={() => submitAnswer('option_two')}>{i.options.b}</button>
-                        {i.options.c && <button onClick={() => submitAnswer('option_three')}>{i.options.c}</button>}
-                        {i.options.d && <button onClick={() => submitAnswer('option_four')}>{i.options.d}</button>}
-                        </div>
-                    )
-                })}
+                <ShowParticipantOptions 
+                question={currentQ}
+                onClick={submitAnswer}
+                />
             </div>
         )
     }
     return (
-        <main>
-            <p>Waitingroom: {JSON.stringify(waitingRoomActive)}</p>
-            <p>userFeedBack: {JSON.stringify(userFeedBack)}</p>
-            <p>Locked: {JSON.stringify(screenLocked)}</p>
-            <p>Running: {JSON.stringify(quizRunning)}</p>
-            <p>Pending: {JSON.stringify(quizPending)}</p>
-            <p>Ended: {JSON.stringify(quizEnded)}</p>
-            <p>CurrentQ: {JSON.stringify(currentQ)}</p>
-            <p>Points: {JSON.stringify(userPoints)}</p>
-            <ShowOptionsComponent />
+        <PageContainer>
+
+            {waitingRoomActive ? <p>Waitingroom: {JSON.stringify(waitingRoomActive)}</p> : ''}
+            {!quizPending ? <ShowOptionsComponent /> : ''}
+            
+            
+        </PageContainer>
                 
-        </main>
     );
 }
 

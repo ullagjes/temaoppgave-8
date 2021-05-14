@@ -4,6 +4,7 @@ import { AuthProvider } from '../context/authContext';
 import { Question } from '../context/questionContext';
 import { QuizMaster } from '../context/quizMasterContext';
 import { ThemeProvider } from '@material-ui/styles';
+import CssBaseline  from '@material-ui/core/CssBaseline';
 import theme from '../utils/theme';
 
 function MyApp({ Component, pageProps }) {

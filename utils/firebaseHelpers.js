@@ -296,10 +296,10 @@ export async function addQuizToRunningCollection(quizPin, selectedQuizData){
       id: i.id,
       title: i.title,
       options: {
-        option_one: i.options.a,
-        option_two: i.options.b,
-        option_three: i.options.c,
-        option_four: i.options.d,
+        option_one: i.options.option_one,
+        option_two: i.options.option_two,
+        option_three: i.options.option_three,
+        option_four: i.options.option_four,
       },
       correctAnswers: i.correctAnswers,
       isSelected: false

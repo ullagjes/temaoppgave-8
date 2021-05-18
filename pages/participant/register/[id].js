@@ -7,6 +7,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 import { addParticipantToRunningQuiz } from '../../../utils/firebaseHelpers';
+import PageContainer from '../../../components/PageComponents/PageContainer';
 
 //const validationSchema = Yup.number().required('please add pincode').label('Pin code')
 
@@ -29,7 +30,7 @@ function RegisterParticipant() {
     }
 
     return (
-        <main>
+        <PageContainer>
             <Formik
             initialValues={{
                 nickname: '',
@@ -47,15 +48,11 @@ function RegisterParticipant() {
                     <Field name="nickname" type="text" placeholder="Nickname"/>
                     <ErrorMessage name="nickname" />
                     <br></br>
-                    
                     <button type="submit">Join quiz!</button>
-                            
                 </Form>
-                
             </Formik>
-            
-            <button onClick={onSubmit}>test</button>
-        </main>
+        </PageContainer>
+        
     );
 }
 

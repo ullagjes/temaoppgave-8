@@ -53,7 +53,7 @@ function createQuestions () {
         if(counter === null && user){
             getCounter(user.uid, id)
         }
-    }, [user])
+    }, [user, id])
 
     useEffect(() => {
         console.log('data loaded from firestore in createQuestions:', selectedQuizData.length)

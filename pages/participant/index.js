@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 
 import firebaseInstance from '../../utils/firebase';
 import { checkIfQuizExists } from '../../utils/firebaseHelpers';
+import PageContainer from '../../components/PageComponents/PageContainer';
+import { TextElement, UnderTitle } from '../../components/BaseComponents';
 
 //const validationSchema = Yup.number().required('please add pincode').label('Pin code')
 
@@ -30,7 +32,9 @@ function Participant() {
     }
 
     return (
-        <main>
+        <PageContainer>
+            <UnderTitle component={"h1"}>Welcome to KaShoot!</UnderTitle>
+            <TextElement>Use the pincode supplied by your quizmaster to join the quiz.</TextElement>
             <Formik
             initialValues={{
                 pincode: '',
@@ -52,7 +56,8 @@ function Participant() {
                             
                 </Form>
             </Formik>
-        </main>
+        </PageContainer>
+        
     );
 }
 

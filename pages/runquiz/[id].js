@@ -276,7 +276,8 @@ function hostRunningQuiz() {
     function WaitingRoomComponent(){
         return(
             <WaitingroomComponent 
-                pinCode={id}
+                title={`Use pincode ${id} to join the quiz!`}
+                subTitle={"Waiting for participants to join..."}
                 participants={participants}
                 onClick={startQuiz}
             />

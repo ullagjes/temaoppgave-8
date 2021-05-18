@@ -2,6 +2,13 @@
 import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles((theme) => ({
+    text: {
+        color: theme.palette.secondary.contrastText
+    },
+}))
 
 export function HeadLine({children}){
     return(
@@ -25,21 +32,26 @@ export function SubTitle({children, component}){
     )
 }
 
-export function UnderTitle({children, component}){
+export function UnderTitle({children, component, className}){
+    const classes = useStyles();
+
     return(
         <Typography
             component={component} 
             variant="h4"
+            className={`${classes.text} + ${className}`}
         >
             {children}
         </Typography>
     )
 }
 
-export function TextElement({children, style}){
+export function TextElement({ children }){
+    const classes = useStyles()
     return(
         <Typography
             variant="body1"
+            className={classes.text}
         >
             {children}
         </Typography>

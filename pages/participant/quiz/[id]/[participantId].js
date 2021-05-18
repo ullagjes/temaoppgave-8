@@ -11,6 +11,8 @@ import {
 } from '../../../../utils/firebaseHelpers';
 import ShowParticipantOptions from '../../../../components/PageComponents/ShowParticipantOptions';
 import PageContainer from '../../../../components/PageComponents/PageContainer';
+import WaitingroomComponent from '../../../../components/PageComponents/WaitingroomComponent';
+import LockedScreenComponent from '../../../../components/PageComponents/LockedScreenComponent';
 
 function ParticipantQuizView() {
 
@@ -178,16 +180,25 @@ function ParticipantQuizView() {
                 <ShowParticipantOptions 
                 question={currentQ}
                 onClick={submitAnswer}
+
                 />
             </div>
         )
     }
     return (
         <PageContainer>
-
-            {waitingRoomActive ? <p>Waitingroom: {JSON.stringify(waitingRoomActive)}</p> : ''}
+            {JSON.stringify(screenLocked)}
+            {JSON.stringify(quizPending)}
+            {waitingRoomActive ? 
+                <WaitingroomComponent
+                title={'The quiz will begin shortly!'}
+                subTitle={'Waiting for quizmaster to start quiz...'}
+                showProgress={true}
+                /> 
+            : ''}
             {!quizPending ? <ShowOptionsComponent /> : ''}
-            
+            {(screenLocked && !quizPending) ? <LockedScreenComponent screenLocked={screenLocked}/>: ''}
+            {(screenLocked && quizPending) ? <>Test</> : ''}
             
         </PageContainer>
                 
@@ -197,7 +208,15 @@ function ParticipantQuizView() {
 export default ParticipantQuizView;
 
 /**
- * 
+ * <p>userFeedBack: {JSON.stringify(userFeedBack)}</p>
+            <p>Locked: {JSON.stringify(screenLocked)}</p>
+            <p>Running: {JSON.stringify(quizRunning)}</p>
+            <p>Pending: {JSON.stringify(quizPending)}</p>
+            <p>Ended: {JSON.stringify(quizEnded)}</p>
+            <p>CurrentQ: {JSON.stringify(currentQ)}</p>
+            <p>Points: {JSON.stringify(userPoints)}</p>
+
+            
  *     // async function getParticipantData(){
     //     console.log(currentQ[0].id)
     //     await participantDocument.collection('answers')

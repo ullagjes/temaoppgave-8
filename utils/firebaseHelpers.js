@@ -238,8 +238,6 @@ try {
     hasEnded: true
   })
 
-
-  
   return deleteEachUserAnswers(quizPin, participants)
   } catch(error){
     console.log('error when reseting quiz')

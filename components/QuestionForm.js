@@ -2,6 +2,14 @@ import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+    form: {
+        backgroundColor: 'red',
+    }
+}))
+
 const schema = Yup.object().shape({
     title: Yup.string().required('Please add a question').label('Question'),
     option_one: Yup.string().required('At least two options required').label('First option'),
@@ -12,6 +20,7 @@ const schema = Yup.object().shape({
 });
 
 function QuestionForm({ initialValues, onSubmit }) {
+    const classes = useStyles();
 
     return (
         <Formik

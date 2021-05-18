@@ -112,10 +112,10 @@ export async function updateQuestionData(userId, quizPin, questionId, values){
   .update({
       title: values.title,
       options: {
-          a: values.option_one,
-          b: values.option_two,
-          c: values.option_three,
-          d: values.option_four,
+          option_one: values.option_one,
+          option_two: values.option_two,
+          option_three: values.option_three,
+          option_four: values.option_four,
         },
       correctAnswers: values.correctAnswers
       }, {merge: true})
@@ -225,7 +225,7 @@ export async function countCollection(user, quizPin){
     return(array)
 }
 
-export async function resetQuiz(quizPin) {
+export async function resetQuiz(quizPin, participants) {
 try {
 
   await runningCollection
@@ -239,23 +239,8 @@ try {
   })
 
 
-  // const collection = await firebaseInstance
-  // .firestore()
-  // .collection('running')
-  // .doc(quizPin)
-  // .collection('participants')
-  // .get()
   
-  // let array = []
-
-  // collection.forEach(i => {
-  //   array.push({
-  //     id: i.id,
-  //     ...i.data()
-  //   })
-  // })
-
-  // return deleteEachUserAnswers(quizPin, array)
+  return deleteEachUserAnswers(quizPin, participants)
   } catch(error){
     console.log('error when reseting quiz')
 }
@@ -263,19 +248,58 @@ try {
 }
 
 async function deleteEachUserAnswers(quizPin, participants){
-  
-  const collection = await firebaseInstance
+  console.log(quizPin, participants)
+
+  const colRef = await firebaseInstance
   .firestore()
   .collection('running')
   .doc(quizPin)
-  .collection('participants')
 
-  await participants.forEach((i, index) => {
-    collection.doc(i.id)
-    .set({
-      isPlaying: false
+  const participantsColl = await colRef
+  .collection('participants')
+  
+  const questionCol = await colRef
+  .collection('questions')
+  .get()
+
+  let array = []
+  questionCol.forEach(i => {
+    array.push(i.id)
+  })
+  
+  await participants.forEach(i => {
+    array.forEach(j => {
+      participantsColl.doc(i.id)
+      .collection('answers')
+      .doc(j)
+      .delete()
     })
   })
+
+  await participants.forEach(i => {
+    participantsColl
+    .doc(i.id)
+    .delete()
+  })
+
+  
+
+
+
+  
+
+
+
+  // await participants.forEach((i) => {
+  //   allQs.forEach((j) => {
+  //   collection.doc(i.id)
+  //   .collection('answers')
+  //   .doc(j.id)
+  //   .delete()
+  //   })
+    
+    
+  // })
 
 }
 

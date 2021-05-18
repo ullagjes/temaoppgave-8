@@ -30,7 +30,9 @@ export const QuizMaster = ({ children }) => {
         if(user){
             getQuizmasterData(user.uid)
             setUserData(user)
+            return;
         }
+        return;
     }, [user])
 
     async function getQuizmasterData(user){

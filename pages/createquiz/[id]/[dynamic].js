@@ -4,11 +4,12 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../../context/authContext';
 import { getQuestionData, updateQuestionData } from '../../../utils/firebaseHelpers';
 import QuestionForm from '../../../components/QuestionForm';
+import PageContainer from '../../../components/PageComponents/PageContainer';
 
 function editQuestion() {
     const router = useRouter();
     const { id, dynamic } = router.query;
-    const { user } = useAuth();
+    const { user, loading, isAuthenticated } = useAuth();
     const [questionData, setQuestionData] = useState(null)
 
     useEffect(() => {
@@ -27,20 +28,33 @@ function editQuestion() {
         router.push(`/createquiz/${id}`)
     }
 
+//===========================================AUTHENTICATION
+    
+    if(loading){
+        return(
+        <>Loading...</>
+        );
+    };
+    
+    if(isAuthenticated === false) {
+        router.push('/login');
+        return <>You aren't logged in.</>
+    };
+
     return (
-        <div>
-            
-            {questionData && <QuestionForm initialValues={{
-                    title: questionData.title,
-                    option_one: questionData.options.a,
-                    option_two: questionData.options.b,
-                    option_three: questionData.options.c,
-                    option_four: questionData.options.d,
+        <PageContainer user={user}>
+            {JSON.stringify(questionData)}
+            { questionData && <QuestionForm initialValues={{
+                   title: questionData.title,
+                    option_one: questionData.options.option_one,
+                    option_two: questionData.options.option_two,
+                    option_three: questionData.options.option_three,
+                    option_four: questionData.options.option_four,
                     correctAnswers: [...questionData.correctAnswers]
                     }} 
                     onSubmit={updateQuestion}
-            />}
-        </div>
+            />} 
+        </PageContainer>
     );
 }
 

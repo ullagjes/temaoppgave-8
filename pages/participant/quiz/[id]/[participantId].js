@@ -7,12 +7,18 @@ import firebaseInstance from '../../../../utils/firebase';
 import { 
     getCorrectAnswer, 
     submitAnswerToFireStore, 
-    updateUserPoints 
+    updateUserPoints,
+    getAllParticipantScores, 
 } from '../../../../utils/firebaseHelpers';
 import ShowParticipantOptions from '../../../../components/PageComponents/ShowParticipantOptions';
 import PageContainer from '../../../../components/PageComponents/PageContainer';
 import WaitingroomComponent from '../../../../components/PageComponents/WaitingroomComponent';
 import LockedScreenComponent from '../../../../components/PageComponents/LockedScreenComponent';
+import ShowParticipantFeedback from '../../../../components/PageComponents/ShowParticipantFeedback';
+import QuizEndedComponent from '../../../../components/PageComponents/QuizEndedComponent';
+
+import ShowPodium from '../../../../components/PageComponents/ShowPodium';
+import { ButtonComponent } from '../../../../components/BaseComponents';
 
 function ParticipantQuizView() {
 
@@ -33,6 +39,7 @@ function ParticipantQuizView() {
     //PARTICIPANT DATA
     const [userPoints, setUserPoints] = useState(0)
     const [userFeedBack, setUserFeedBack] = useState('')
+    const [participants, setParticipants] = useState([])
 
     //FIRESTORE REFS
     const participantDocument = firebaseInstance
@@ -75,6 +82,25 @@ function ParticipantQuizView() {
             }
         }
     }, [quizPending])
+    
+    //GETS PARTICIPANTSCORES WHEN QUIZ IS ENDED
+    useEffect(() => {
+        getParticipants(id)
+    }, [quizEnded])
+
+    async function getParticipants(quizPin) {
+        const data = await getAllParticipantScores(quizPin)
+        const filteredData = await filterByHighest(data)
+        setParticipants(filteredData)
+    }
+    
+    //FILTERS CONTESTANTS FROM HIGHEST TO LOWEST
+    function filterByHighest(value){
+        const filtered = value.sort(function (a, b){
+            return b.points - a.points
+        })
+        return filtered;
+    }
 
     //GET INITIAL DATA FOR QUIZ RUNNING
     async function getAllQuizData() {
@@ -140,7 +166,7 @@ function ParticipantQuizView() {
     async function submitAnswer(value){
         let check = await submitAnswerToFireStore(id, participantId, currentQ[0].id, value)
         if(value === null){
-            setUserFeedBack('To late!')
+            setUserFeedBack('Sorry - too late!')
             setScreenLocked(true)
             return null;
         } else {
@@ -156,22 +182,14 @@ function ParticipantQuizView() {
         
         if(answer.includes(value) && check === false){
             setUserPoints(userPoints + 10)
-            setUserFeedBack('Correct!')
+            setUserFeedBack('Correct! Awesome job!')
             console.log('Correct!')
         } else if(check === true) {
             return null;
         } else {
-            setUserFeedBack('Wrong!')
+            setUserFeedBack('Wrong! Better luck next time')
             console.log('Wrong!')
         }
-    }
-
-    function LoadingComponent(){
-        return (
-            <>
-                {quizPending ? <p>Your points so far: {userPoints}</p> : <p>{userFeedBack}</p>}
-            </>
-        )
     }
 
     function ShowOptionsComponent(){
@@ -187,19 +205,33 @@ function ParticipantQuizView() {
     }
     return (
         <PageContainer>
-            {JSON.stringify(screenLocked)}
-            {JSON.stringify(quizPending)}
-            {waitingRoomActive ? 
-                <WaitingroomComponent
-                title={'The quiz will begin shortly!'}
-                subTitle={'Waiting for quizmaster to start quiz...'}
-                showProgress={true}
+            {!quizRunning ? <ButtonComponent onClick={() => router.push('/')}>Return to home page</ButtonComponent> : 
+            <>
+                {waitingRoomActive ? 
+                    <WaitingroomComponent
+                    title={'The quiz will begin shortly!'}
+                    subTitle={'Waiting for quizmaster to start quiz...'}
+                    showProgress={true}
+                    /> 
+                : ''}
+                {!quizPending ? 
+                <ShowOptionsComponent /> 
+                : ''}
+                {(screenLocked && !quizPending && !quizEnded) ? <LockedScreenComponent screenLocked={screenLocked}/>: ''}
+                {(screenLocked && quizPending && !quizEnded) ? 
+                <ShowParticipantFeedback 
+                userFeedBack={userFeedBack}
+                userPoints={userPoints}
                 /> 
-            : ''}
-            {!quizPending ? <ShowOptionsComponent /> : ''}
-            {(screenLocked && !quizPending) ? <LockedScreenComponent screenLocked={screenLocked}/>: ''}
-            {(screenLocked && quizPending) ? <>Test</> : ''}
-            
+                : 
+                ''}
+                {(quizEnded && participants.length > 0) ? 
+                <QuizEndedComponent
+                title={'Quiz over!'}
+                subTitle={'Final scores'}
+                participants={participants}  /> : ''}
+            </>
+            }
         </PageContainer>
                 
     );

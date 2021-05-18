@@ -12,8 +12,11 @@ import { ShowOptionsComponent } from '../../components/PageComponents/ShowOption
 import ShowScoresComponent from '../../components/PageComponents/ShowScoresComponent';
 import PageContainer from '../../components/PageComponents/PageContainer';
 import QuizEndedComponent from '../../components/PageComponents/QuizEndedComponent';
+
+import ShowPodium from '../../components/PageComponents/ShowPodium';
+
 import { ButtonComponent, SubTitle } from '../../components/BaseComponents';
-import { Container } from '@material-ui/core';
+import { Button, Container } from '@material-ui/core';
 
 //TODO: check firestore data for quizrunning instead of usestate
 
@@ -22,7 +25,7 @@ function hostRunningQuiz() {
     const router = useRouter();
 
     const { id } = router.query;
-    const { user } = useAuth();
+    const { user, loading, isAuthenticated } = useAuth();
 
     //COUNTER USED IN REAL TIME DATA UPDATES
     const [counting, setCounting] = useState(0)
@@ -36,7 +39,6 @@ function hostRunningQuiz() {
 
     //PARTICIPANT DATA
     const [participants, setParticipants] = useState([])
-    const [participantsByScore, setParticipantsByScore] = useState([])
     
     //FOR ALL QUESTIONS AND REALTIME DATA
     const [allQs, setAllQs] = useState([])
@@ -59,18 +61,20 @@ function hostRunningQuiz() {
         getCurrentQ()
         getParticipantData()
         getQCounter()
-        
+        return;
     }, [id])
 
     //UPDATE COUNTER
     useEffect(() => {
-        setCurrentQ(counting)
+        return setCurrentQ(counting)
     }, [counting])
 
     useEffect(() => {
         if(allQs.length !== 0){
-            updateCountInFirestore(allQs[currentQ])
+            return updateCountInFirestore(allQs[currentQ])
         }
+        return;
+        
     }, [allQs, currentQ])
 
     //UPDATES STATE FOR PENDING AND WAITING ROOM IF USER REFRESHES PAGE
@@ -105,12 +109,17 @@ function hostRunningQuiz() {
                 console.log('still in play')
             }
         }
+        return;
     }, [allQuizData])
 
     //UPDATES WAITINGROOM TO FALSE AND SETS QUIZRUNNING TO TRUE
     function startQuiz(){
-        updateWaitingRoomStatus()
-        nextQ()
+        if(participants.length === 0){
+            alert('You need at least one participant!')
+        } else {
+            updateWaitingRoomStatus()
+            nextQ()
+        }
     }
 
     //UPDATES WAITINGROOM BOOLEAN. USED IN STARTQUIZ FUNCTION
@@ -130,7 +139,6 @@ function hostRunningQuiz() {
         }, {merge: true})
         
         setQuizPending(true)
-        
     }
 
     //SETS PENDING BOOLEAN TO FALSE IN FIRESTORE
@@ -161,7 +169,7 @@ function hostRunningQuiz() {
                 ...i.data()
             })
         })
-        setAllQs(array)
+        return setAllQs(array)
     }
 
     //SYNCS COUNTER STATE WITH COUNTER IN FIRESTORE
@@ -248,12 +256,13 @@ function hostRunningQuiz() {
                 isSelected: false
             }, {merge: true})
         })
+        return;
     }
 
     //END QUIZ RESET STATES AND FIRESTORE COLLECTION
     async function endQuiz(){
-        await resetQuiz(id)
-        router.push('/')
+        await resetQuiz(id, participants)
+        router.push('/quizmaster/profile')
     }
 
     //UPDATES WHICH QUESTION WILL BE VISIBLE THROUGH REAL TIME DATA
@@ -263,73 +272,15 @@ function hostRunningQuiz() {
             upDateCurrentQInFirestore(allQs[currentQ].id)
             
             undoPending()
+            return; 
         } else {
             console.log('the end')
             await runningQuizDocument
             .update({
                 hasEnded: true
             }, {merge: true})
-            setQuizEnded(true)
+            return setQuizEnded(true)
         }
-    }
-
-    function WaitingRoomComponent(){
-        return(
-            <WaitingroomComponent 
-                title={`Use pincode ${id} to join the quiz!`}
-                subTitle={"Waiting for participants to join..."}
-                participants={participants}
-                onClick={startQuiz}
-            />
-        )
-    }
-
-    function ShowOptions(){
-        return(
-            <>
-            {realTimeQ.map((i, index) => {
-                console.log(i)
-                return (
-                    <ShowOptionsComponent 
-                    key={index}
-                    title={i.title}
-                    optionOne={i.options.option_one}
-                    optionTwo={i.options.option_two}
-                    optionThree={i.options.option_three}
-                    optionFour={i.options.option_four}
-                    onClick={setQuizToPending}
-                    />
-                    )
-                })
-            }
-            </>
-        )
-    }
-
-    function ShowScores(){
-        return(
-            
-            <ShowScoresComponent 
-            participants={participants} 
-            question={realTimeQ}
-            isPending={true}
-            bPxs={12}
-            bPsm={3}
-            onClick={nextQ}
-            />
-            
-        )
-    }
-
-    function QuizEnded(){
-        return(
-        <QuizEndedComponent
-        title={'Quiz over!'}
-        subTitle={'Final scores'}
-        participants={participants} 
-        onClick={endQuiz}
-        />
-        )
     }
 
     function NoQuizRunningComponent(){
@@ -340,15 +291,73 @@ function hostRunningQuiz() {
         )
     }
 
+    //AUTHENTICATION
+    
+    if(loading){
+        return(
+        <>Loading...</>
+        );
+    };
+
+    if(isAuthenticated === false) {
+        router.push('/login');
+        return <>You aren't logged in.</>
+    };
+  
     return(
         <PageContainer>
-        {(!quizRunning && quizEnded) ? <NoQuizRunningComponent /> 
+        {(!quizRunning && quizEnded) ? 
+        <NoQuizRunningComponent /> 
         : 
         <>
-            {waitingRoomAcitve ? <WaitingRoomComponent /> : ''}
-            {(quizRunning && !quizPending) ? <ShowOptions /> : ''}
-            {quizPending && !quizEnded ? <ShowScores /> : ''}
-            {quizEnded ? <QuizEnded /> : ''}
+            {waitingRoomAcitve ? 
+            <WaitingroomComponent 
+                title={`Use pincode ${id} to join the quiz!`}
+                subTitle={"Waiting for participants to join..."}
+                participants={participants}
+                onClick={startQuiz}
+            /> 
+            : 
+            ''}
+            {(quizRunning && !quizPending) ? 
+            <>
+                {realTimeQ.map((i, index) => {
+                    console.log(i)
+                    return (
+                        <ShowOptionsComponent 
+                        key={index}
+                        title={i.title}
+                        optionOne={i.options.option_one}
+                        optionTwo={i.options.option_two}
+                        optionThree={i.options.option_three}
+                        optionFour={i.options.option_four}
+                        onClick={setQuizToPending}
+                        />
+                        )
+                    })
+                }
+            </> 
+            : 
+            ''}
+            {quizPending && !quizEnded ? 
+                <ShowScoresComponent 
+                    participants={participants} 
+                    question={realTimeQ}
+                    isPending={true}
+                    bPxs={12}
+                    bPsm={3}
+                    onClick={nextQ}
+                /> 
+            : 
+            ''}
+            {quizEnded && participants.length ? 
+            <ShowPodium 
+            participants={participants} 
+            onClick={endQuiz} 
+            /> 
+            
+            : 
+            ''}
         </>
         }
         </PageContainer>

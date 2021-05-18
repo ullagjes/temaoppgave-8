@@ -120,7 +120,6 @@ function ShowScoresComponent({
     spacing={1}
     direction='row'
     alignItems='center'
-
     >
         {question && <Grid 
             className={classes.paperContainer}
@@ -150,10 +149,11 @@ function ShowScoresComponent({
                                         <Grow 
                                         in={isPending === true}
                                         style={{ transformOrigin: '0 0 0' }}
+                                        key={index}
                                         >
                                         <Paper 
                                         className={`${classOne} ${classes.optionDiv}`}
-                                        key={index}>
+                                        >
                                             <>
                                             <RadioButtonUncheckedIcon className={classes.icon}/>
                                             {getValue.map(k => {
@@ -169,9 +169,10 @@ function ShowScoresComponent({
                                             <Grow 
                                             in={isPending === true}
                                             style={{ transformOrigin: '0 0 0' }}
+                                            key={index}
                                             >
                                             <Paper className={`${classTwo} ${classes.optionDiv}`}
-                                            key={index}>
+                                            >
                                                 <>
                                                 <CheckBoxOutlineBlankIcon className={classes.icon}/>
                                                 {getValue.map(k => {
@@ -190,9 +191,10 @@ function ShowScoresComponent({
                                         unmountOnExit
                                         in={isPending === true}
                                         style={{ transformOrigin: '0 0 0' }}
+                                        key={index}
                                         >
                                         <Paper className={`${classThree} ${classes.optionDiv}`}
-                                        key={index}>
+                                        >
                                         <>
                                             <StarBorderIcon className={classes.icon}/>
                                             {getValue.map(k => {
@@ -208,9 +210,10 @@ function ShowScoresComponent({
                                             <Grow 
                                             in={isPending}
                                             style={{ transformOrigin: '0 0 0' }}
+                                            key={index}
                                             >
                                             <Paper className={`${classFour} ${classes.optionDiv}`}
-                                            key={index}>
+                                            >
                                             <>
                                             <ChangeHistoryIcon className={classes.icon}/>
                                                 {getValue.map(k => {

@@ -1,3 +1,4 @@
+import { Button } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import PageContainer from '../../components/PageComponents/PageContainer';
 
@@ -12,7 +13,7 @@ function profile() {
 
     return (
         <PageContainer user={user}>
-
+            <Button>Test</Button>
         </PageContainer>
     );
 }

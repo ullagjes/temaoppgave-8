@@ -49,12 +49,6 @@ function QuizEndedComponent({
                 xs={12}>
                     <SubTitle>{title}</SubTitle>
                 </Grid>
-                <Grid 
-                className={classes.button}
-                item 
-                xs={12}>
-                    <ButtonComponent onClick={onClick} size={"large"}>End quiz</ButtonComponent>
-                </Grid>
                 <Grid item xs>
                 <ShowScoresComponent 
                 title={subTitle}

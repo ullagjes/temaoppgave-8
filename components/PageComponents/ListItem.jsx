@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton'; 
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import Link from '@material-ui/core/Link';
 
 const useStyles = makeStyles((theme) => ({
@@ -54,8 +55,10 @@ export default function ListItem({
     subTitle, 
     ariaLabelEdit, 
     ariaLabelDelete, 
+    ariaLabelStart,
     handleEdit, 
-    handleDelete
+    handleDelete,
+    handleStart
 }){
     const classes = useStyles();
 
@@ -75,9 +78,11 @@ export default function ListItem({
                 <IconButton aria-label={ariaLabelEdit} onClick={handleEdit}>
                     <EditIcon className={classes.editIcon}/>
                 </IconButton>
+                
                 {handleDelete && <IconButton aria-label={ariaLabelDelete} onClick={handleDelete}>
                     <DeleteIcon className={classes.deleteIcon}/>
                 </IconButton>}
+
             </div>
         </Card>
     )

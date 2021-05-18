@@ -22,10 +22,13 @@ export function HeadLine({children}){
 }
 
 export function SubTitle({children, component}){
+    const classes = useStyles();
+
     return(
         <Typography
             component={component}
             variant="h2"
+            className={classes.text}
         >
             {children}
         </Typography>

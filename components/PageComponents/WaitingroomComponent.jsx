@@ -75,8 +75,8 @@ function WaitingroomComponent({title, subTitle, participants, showProgress, onCl
                         >
                         {participants.map((i, index) => {
                             return(
-                                <Grid item>
-                                    <ParticipantItem participant={i.id} key={index}/>
+                                <Grid item key={index}>
+                                    <ParticipantItem participant={i.id} />
                                 </Grid>
                             )
                         })}

@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 
 import { addParticipantToRunningQuiz } from '../../../utils/firebaseHelpers';
 import PageContainer from '../../../components/PageComponents/PageContainer';
+import FormComponent from '../../../components/FormComponents/FormComponent';
+import FormItem from '../../../components/FormComponents/FormItem';
 
 //const validationSchema = Yup.number().required('please add pincode').label('Pin code')
 
@@ -31,26 +33,19 @@ function RegisterParticipant() {
 
     return (
         <PageContainer>
-            <Formik
-            initialValues={{
-                nickname: '',
-                }}
-            validationSchema={schema}
-            onSubmit={
-                (values, { resetForm }) => {
-                    onSubmit(values)
-                    resetForm()
-                }
-            }
+            <FormComponent
+            initialValues={{nickname: '',}}
+            schema={schema}
+            onSubmit={values => onSubmit(values)}
+            formTitle={"Add a nickname"}
+            buttonText={"Join quiz!"}
             >
-                <Form>
-                    <label htmlFor="nickname">Enter your nickname here: </label>
-                    <Field name="nickname" type="text" placeholder="Nickname"/>
-                    <ErrorMessage name="nickname" />
-                    <br></br>
-                    <button type="submit">Join quiz!</button>
-                </Form>
-            </Formik>
+                <FormItem
+                fieldName={"nickname"}
+                placeholder={"Nickname"}
+                labelText={"One last step: Enter your nickname:"}
+                />
+            </FormComponent>
         </PageContainer>
         
     );

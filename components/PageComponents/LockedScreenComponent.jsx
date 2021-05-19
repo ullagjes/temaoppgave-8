@@ -26,6 +26,7 @@ function LockedScreenComponent({ screenLocked }) {
             container
             justify="center"
             alignItems="center"
+            direction="column"
             className={classes.title}
             >   
                 <UnderTitle  component="h1">Waiting for correct answer...</UnderTitle>

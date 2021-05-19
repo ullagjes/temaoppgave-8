@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
     },
+    underTitle: {
+        color: theme.palette.primary.contrastText,
+    }
 }))
 
 function library() {
@@ -42,7 +45,7 @@ function library() {
             container >
                 <Grid className={classes.titleContainer} item xs={12}>
                     <SubTitle component={'h1'}>Library</SubTitle>
-                    <UnderTitle component={'h2'}>Here are all your previous quizes. Select one to edit or to get started!</UnderTitle>
+                    <UnderTitle component={'h2'} className={classes.underTitle}>Here are all your previous quizes. Select one to edit or to get started!</UnderTitle>
                 </Grid>
                 <Grid 
                 container 

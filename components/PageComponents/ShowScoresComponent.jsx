@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
     },
+    button: {
+        border: theme.borders.medium,
+    },
     avatar: {
         color: theme.palette.secondary.contrastText,
         backgroundColor: theme.palette.secondary.main,
@@ -48,11 +51,13 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         padding: theme.spacing(3),
         color: theme.palette.secondary.contrastText,
+        border: theme.borders.medium,
     },
     listItem: {
-        backgroundColor: theme.palette.secondary.light,
+        backgroundColor: theme.palette.secondary.dark,
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
+        width: '100%',
 
     },
     optionDiv: {
@@ -63,8 +68,9 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         alignContent: 'center',
         fontSize: '1.5rem',
-        color: theme.palette.primary.contrastText,
-        textAlign: 'left'
+        color: theme.palette.text.main,
+        textAlign: 'left',
+        border: theme.borders.medium,
     },
     option_one: {
         backgroundColor: theme.palette.primary.one,
@@ -75,7 +81,6 @@ const useStyles = makeStyles((theme) => ({
     },
     option_three: {
         backgroundColor: theme.palette.primary.three,
-        
     },
     option_four: {
         backgroundColor: theme.palette.primary.four,
@@ -87,15 +92,20 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(4),
         alignSelf: 'center',
         textAlign: 'center',
-        backgroundColor: theme.palette.primary.light,
-        color: theme.palette.primary.contrastText
+        backgroundColor: theme.palette.transparent.main,
+        color: 'black',
+        border: theme.borders.thick,
     },
     paperContainer: {
-        padding: theme.spacing(3)
+        padding: theme.spacing(3),
+        
     },
     titleContainer: {
         padding: theme.spacing(2)
     },
+    title: {
+        color: 'black',
+    }
 }))
 
 function ShowScoresComponent({
@@ -119,7 +129,8 @@ function ShowScoresComponent({
     container 
     spacing={1}
     direction='row'
-    alignItems='center'
+    justify="center"
+    alignContent="flex-start"
     >
         {question && <Grid 
             className={classes.paperContainer}
@@ -133,7 +144,7 @@ function ShowScoresComponent({
                 square
                 >
                     <div className={classes.titleContainer}>
-                        <UnderTitle>Correct answer(s)</UnderTitle>
+                        <UnderTitle component={"h1"} className={classes.title}>Correct answer(s)</UnderTitle>
                         {question && question.map((i, index) => {
                             return(
                             <div 
@@ -230,7 +241,7 @@ function ShowScoresComponent({
                             )
                         })
                         }
-                        <ButtonComponent onClick={onClick} size={"large"}>Next</ButtonComponent>
+                        <ButtonComponent className={classes.button} onClick={onClick} size={"large"}>Next</ButtonComponent>
                     </div>
                     
                 </Paper>
@@ -239,29 +250,37 @@ function ShowScoresComponent({
        
         <Grid 
         className={classes.listContainer}
+        container
+        direction="column"
+        justify="flex-start"
+        alignItems="flex-start"
         item 
         xs={bPxs} 
         sm={bPsm}>
+            <Grid item xs={12}>
+                <Typography variant="h6" component={'h2'}>
+                    {title}
+                </Typography> 
+            </Grid>
             <List>
-            <Typography variant="h6">
-            {title}
-            </Typography> 
-              {participants && participants.map((i, index) => {
+                {participants && participants.map((i, index) => {
                   return(
-
-                  <ListItem key={index} className={classes.listItem}>
-                    <ListItemAvatar>
-                      <Avatar className={classes.avatar}>
-                        <FaceIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      className={classes.text}
-                      primary={`${i.id.toUpperCase()}: ${i.points}`}
-                    />
-                  </ListItem>
+                    <Grid item xs={12}>
+                    <ListItem key={index} className={classes.listItem}>
+                        <ListItemAvatar>
+                            <Avatar className={classes.avatar}>
+                                <FaceIcon />
+                            </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                            className={classes.text}
+                            primary={`${i.id.toUpperCase()}: ${i.points}`}
+                            />
+                        </ListItem>
+                    </Grid>
                   )
               })}
+              
             </List>
         </Grid>
         

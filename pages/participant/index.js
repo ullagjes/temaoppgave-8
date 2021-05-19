@@ -10,8 +10,10 @@ import firebaseInstance from '../../utils/firebase';
 import { checkIfQuizExists } from '../../utils/firebaseHelpers';
 import PageContainer from '../../components/PageComponents/PageContainer';
 import { TextElement, UnderTitle } from '../../components/BaseComponents';
+import FormComponent from '../../components/FormComponents/FormComponent';
+import FormItem from '../../components/FormComponents/FormItem';
 
-//const validationSchema = Yup.number().required('please add pincode').label('Pin code')
+
 
 const schema = Yup.object().shape({
     pincode: Yup.string().required('Please add a pincode').label('Pincode'),
@@ -33,9 +35,44 @@ function Participant() {
 
     return (
         <PageContainer>
-            <UnderTitle component={"h1"}>Welcome to KaShoot!</UnderTitle>
+            <FormComponent
+            initialValues={{pincode: '',}}
+            schema={schema}
+            onSubmit={values => onSubmit(values)}
+            formTitle={"Welcome to KaShoot!"}
+            buttonText={"Next"}
+            >
+                <FormItem 
+                fieldName={"pincode"}
+                placeholder={"000000"}
+                labelText={"Use the pincode supplied by your quizmaster to join the quiz"}
+                />
+            </FormComponent>
+        </PageContainer>
+        
+    );
+}
+
+export default Participant;
+
+/*
+<UnderTitle component={"h1"}>Welcome to KaShoot!</UnderTitle>
             <TextElement>Use the pincode supplied by your quizmaster to join the quiz.</TextElement>
-            <Formik
+            
+<Formik
+                validationSchema={validationSchema}
+                onSubmit={(values)=> console.log(values)}
+            >
+                <Form>
+                    <label htmlFor="pincode">Enter pin code here</label>
+                    <Field name="pincode" type="text" placeholder="000000" />
+                    <ErrorMessage name="pincode" />
+                    <label htmlFor="name">Enter pin code here</label>
+                    <Field name="name" type="text" placeholder="name" />
+                    <ErrorMessage name="name" />
+                    <button type="submit">Done</button>
+                </Form>
+                <Formik
             initialValues={{
                 pincode: '',
                 }}
@@ -56,25 +93,5 @@ function Participant() {
                             
                 </Form>
             </Formik>
-        </PageContainer>
-        
-    );
-}
-
-export default Participant;
-
-/*<Formik
-                validationSchema={validationSchema}
-                onSubmit={(values)=> console.log(values)}
-            >
-                <Form>
-                    <label htmlFor="pincode">Enter pin code here</label>
-                    <Field name="pincode" type="text" placeholder="000000" />
-                    <ErrorMessage name="pincode" />
-                    <label htmlFor="name">Enter pin code here</label>
-                    <Field name="name" type="text" placeholder="name" />
-                    <ErrorMessage name="name" />
-                    <button type="submit">Done</button>
-                </Form>
 
             </Formik>*/

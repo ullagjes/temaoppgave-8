@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         backgroundColor: theme.palette.secondary.main,
         padding: theme.spacing(2),
-        maxWidth: '300px',
+        maxWidth: '350px',
         margin: theme.spacing(2),
     },
     details: {
@@ -55,10 +55,8 @@ export default function ListItem({
     subTitle, 
     ariaLabelEdit, 
     ariaLabelDelete, 
-    ariaLabelStart,
     handleEdit, 
     handleDelete,
-    handleStart
 }){
     const classes = useStyles();
 

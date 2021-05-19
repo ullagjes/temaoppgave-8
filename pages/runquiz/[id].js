@@ -305,7 +305,7 @@ function hostRunningQuiz() {
     };
   
     return(
-        <PageContainer>
+        <PageContainer user={user}>
         {(!quizRunning && quizEnded) ? 
         <NoQuizRunningComponent /> 
         : 
@@ -355,7 +355,6 @@ function hostRunningQuiz() {
             participants={participants} 
             onClick={endQuiz} 
             /> 
-            
             : 
             ''}
         </>

@@ -22,7 +22,8 @@ const useStyles = makeStyles((theme) => ({
         height: 'auto',
         maxHeight: '500px',
         textAlign: 'center',
-        backgroundColor: theme.palette.primary.light,
+        backgroundColor: theme.palette.transparent.main,
+        border: theme.borders.medium,
         marginLeft: 'auto',
         marginRight: 'auto',
         marginTop: theme.spacing(4),
@@ -30,11 +31,12 @@ const useStyles = makeStyles((theme) => ({
     },
 
     podium: {
-        width: '100%'
+        width: '100%',
     },
     first: {
         height: 250,
         backgroundColor: 'gold',
+        border: theme.borders.thin,
     },
     second: {
         height: 200,
@@ -43,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
     third: {
         height: 150,
         backgroundColor: '#cd7f32'
+    },
+    title: {
+        color: theme.palette.primary.contrastText,
     }
 }))
 
@@ -56,7 +61,7 @@ function ShowPodium({participants, onClick}) {
         <>{participants.length === 0 ? <p>loading</p> : 
         <>
         {participants && <Container className={classes.root}>
-            <SubTitle component={"h1"}>Podium</SubTitle>
+            <SubTitle component={"h1"} className={classes.title}>Podium</SubTitle>
             <ButtonComponent onClick={onClick}>End quiz</ButtonComponent>
             
                 <Grid 

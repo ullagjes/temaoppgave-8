@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '../../../context/authContext';
 import { getQuestionData, updateQuestionData } from '../../../utils/firebaseHelpers';
-import QuestionForm from '../../../components/QuestionForm';
+import QuestionForm from '../../../components/FormComponents/QuestionForm';
 import PageContainer from '../../../components/PageComponents/PageContainer';
 
 function editQuestion() {
@@ -43,7 +43,6 @@ function editQuestion() {
 
     return (
         <PageContainer user={user}>
-            {JSON.stringify(questionData)}
             { questionData && <QuestionForm initialValues={{
                    title: questionData.title,
                     option_one: questionData.options.option_one,

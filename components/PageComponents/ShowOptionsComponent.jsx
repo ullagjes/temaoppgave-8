@@ -14,12 +14,22 @@ export const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     maxWidth: '1200px',
     alignSelf: 'center',
-    margin: theme.spacing(3)
+    margin: theme.spacing(3),
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    border: '10px solid black',
+    padding: theme.spacing(3),
+  },
+  button: {
+    border: '5px solid black',
+    marginTop: theme.spacing(3),
+  },
+  titleContainer: {
+      padding: theme.spacing(4),
+      backgroundColor: 'white',
+      border: theme.borders.medium,
   },
   title: {
-      padding: theme.spacing(4),
-      backgroundColor: theme.palette.secondary.main,
-      color: theme.palette.secondary.contrastText,
+    color: 'black',
   },
   optionContainer: {
     display: 'flex',
@@ -30,21 +40,26 @@ export const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.one,
     padding: theme.spacing(3),
     marginBottom: theme.spacing(1),
+    
+    border: '5px solid black',
   },
   two: {
     backgroundColor: theme.palette.primary.two,
     padding: theme.spacing(3),
     marginBottom: theme.spacing(1),
+    border: '5px solid black',
   },
   three: {
     backgroundColor: theme.palette.primary.three,
     padding: theme.spacing(3),
     marginBottom: theme.spacing(3),
+    border: '5px solid black',
   },
   four: {
     backgroundColor: theme.palette.primary.four,
     padding: theme.spacing(3),
     marginBottom: theme.spacing(3),
+    border: '5px solid black',
   },
   icon: {
     marginRight: theme.spacing(4),
@@ -68,8 +83,8 @@ export function ShowOptionsComponent({
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-            <Paper className={classes.title}>
-              <UnderTitle component={'h1'}>{title}</UnderTitle>
+            <Paper className={classes.titleContainer}>
+              <UnderTitle component={'h1'} className={classes.title}>{title}</UnderTitle>
             </Paper>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -108,6 +123,7 @@ export function ShowOptionsComponent({
         </Grid>}
       </Grid>
       <ButtonComponent
+      className={classes.button}
       onClick={onClick}
       size={'large'}
       >Show answer</ButtonComponent>

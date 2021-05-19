@@ -6,9 +6,15 @@ const theme = createMuiTheme({
 
     spacing: [0, 4, 8, 16, 32, 64, 130, 260, 520, 1040, 2080],
 
+    borders: {
+        thin: '2px solid black',
+        medium: '5px solid black',
+        thick: '10px solid black',
+    },
+
     palette: {
         primary: {
-            main: purple[500],
+            main: purple[800],
             one: red[500],
             two: green[500],
             three: yellow[900],
@@ -22,8 +28,13 @@ const theme = createMuiTheme({
         },
         text: {
             main: 'black',
-        }
+        },
+        transparent: {
+            main: 'rgba(255, 255, 255, 0.7)'
+        },
+        
     },
+
     
 })
 

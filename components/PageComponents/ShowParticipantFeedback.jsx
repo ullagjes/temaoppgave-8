@@ -6,7 +6,8 @@ import { TextElement, UnderTitle } from '../BaseComponents';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        backgroundColor: theme.palette.secondary.light,
+        backgroundColor: theme.palette.transparent.main,
+        border: theme.borders.thick,
         height: '30vh',
         minHeight: '200px',
         width: '90vw',

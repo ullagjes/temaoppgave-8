@@ -1,14 +1,8 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-    form: {
-        backgroundColor: 'red',
-    }
-}))
+import FormComponent from './FormComponent';
+import FormItem from './FormItem';
 
 const schema = Yup.object().shape({
     title: Yup.string().required('Please add a question').label('Question'),
@@ -20,6 +14,60 @@ const schema = Yup.object().shape({
 });
 
 function QuestionForm({ initialValues, onSubmit }) {
+    
+    return (
+        <FormComponent
+        schema={schema}
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        buttonText={"Done"}
+        formTitle={"Add a question to your quiz"}
+        >
+            <FormItem
+            fieldName={"title"}
+            placeholder={"Type your question here"}
+            labelText={"Question text"}
+            />
+            <FormItem
+            fieldName={"option_one"}
+            placeholder={"Option 1(required)"}
+            labelText={"Option 1:"}
+            cbValue={"option_one"}
+            cbName={"correctAnswers"}
+            cbText={"Option one is correct."}
+            />
+            <FormItem
+            fieldName={"option_two"}
+            placeholder={"Option 2(required)"}
+            labelText={"Option 2:"}
+            cbValue={"option_two"}
+            cbName={"correctAnswers"}
+            cbText={"Option two is correct."}
+            />
+            <FormItem
+            fieldName={"option_three"}
+            placeholder={"Option 3(optional)"}
+            labelText={"Option 3:"}
+            cbValue={"option_three"}
+            cbName={"correctAnswers"}
+            cbText={"Option three is correct."}
+            />
+            <FormItem
+            fieldName={"option_four"}
+            placeholder={"Option 4(optional)"}
+            labelText={"Option 4:"}
+            cbValue={"option_four"}
+            cbName={"correctAnswers"}
+            cbText={"Option four is correct."}
+            />
+        </FormComponent>
+    );
+}
+
+export default QuestionForm;
+
+/**
+ * function QuestionForm({ initialValues, onSubmit }) {
     const classes = useStyles();
 
     return (
@@ -83,9 +131,8 @@ function QuestionForm({ initialValues, onSubmit }) {
     );
 }
 
-export default QuestionForm;
-
-/**async function addQuestionToFiresTore(values){
+ * 
+ * async function addQuestionToFiresTore(values){
         await firebaseInstance
         .firestore()
         .collection('users')

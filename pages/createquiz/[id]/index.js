@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { useAuth } from '../../../context/authContext';
+import FirebaseInstance from '../../../utils/firebase';
+
 import { 
     addQuestionToDocument, 
     addQuizToRunningCollection, 
@@ -14,21 +16,29 @@ import {
 } from '../../../utils/firebaseHelpers';
 
 import Grid from '@material-ui/core/Grid';
-
 import { makeStyles } from '@material-ui/core/styles';
-import { SubTitle, ButtonComponent, TextElement } from '../../../components/BaseComponents';
+
+import { SubTitle, ButtonComponent, TextElement, UnderTitle } from '../../../components/BaseComponents';
 import ListItem from '../../../components/PageComponents/ListItem';
-import QuestionForm from '../../../components/QuestionForm';
+import QuestionForm from '../../../components/FormComponents/QuestionForm';
 import PageContainer from '../../../components/PageComponents/PageContainer';
+import firebaseInstance from '../../../utils/firebase';
+import { Paper } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        maxWidth: '720px',
+
+    container: {
+        width: '90%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
     },
     titleContainer: {
-        margin: theme.spacing(3),
-    }
+        marginBottom: theme.spacing(3),
+        borderBottom: theme.borders.medium,
+    },
+    whiteText: {
+        color: 'white'
+    },
 }))
 
 function createQuestions () {
@@ -40,9 +50,8 @@ function createQuestions () {
 
     const classes = useStyles();
 
-    const [selectedQuizData, setSelectedQuizData] = useState([])
+    const [selectedQuizData, setSelectedQuizData] = useState(null)
     const [selectedQuizTitle, setSelectedQuizTitle] = useState([])
-    const [toggle, setToggle] = useState(false)
     const [counter, setCounter] = useState(null)
 
     useEffect(() => {
@@ -53,24 +62,35 @@ function createQuestions () {
         if(counter === null && user){
             getCounter(user.uid, id)
         }
-    }, [user, id])
+    }, [id])
 
-    useEffect(() => {
-        console.log('data loaded from firestore in createQuestions:', selectedQuizData.length)
-    }, [selectedQuizData])
-
+    //REALTIME DATA LISTENES TO EACH ADDED QUESTION DOCUMENT
     async function getSelectedQuizData(user, quizPin){
-        const data = await checkForQuizData(user, quizPin)
         const title = await getQuizTitle(user, quizPin)
-        console.log(title)
+        
         setSelectedQuizTitle(title)
-        setSelectedQuizData([...data])
+        const quizCollection = await firebaseInstance
+        .firestore()
+        .collection('users')
+        .doc(user)
+        .collection('quizes')
+        .doc(quizPin)
+        .collection('questions')
+
+        return quizCollection.onSnapshot((snapshot) => {
+            let array = []
+            snapshot.forEach(i => {
+                array.push({
+                    id: i.id,
+                    ...i.data()
+                })
+            })
+            setSelectedQuizData(array)
+        })
+
     }
     
-    function createNewQuestion(){
-        setToggle(true)
-    }
-
+    
     async function getCounter(user, quizPin){
         let collectionLength = await countCollection(user, quizPin)
         setCounter(collectionLength)
@@ -106,18 +126,30 @@ function createQuestions () {
   
     return (
         <PageContainer user={user}>
-            <div className={classes.root}>
-                <div className={classes.titleContainer}>
-                    <Grid 
-                    container
-                    direction="row"
-                    >
-                        <Grid item xs={12}>
-                            <SubTitle component={"h1"}>{selectedQuizTitle}</SubTitle>
-                        </Grid>
-                        <Grid item xs={6} sm={3}>
-                            <ButtonComponent onClick={createNewQuestion}>Add question</ButtonComponent>
-                            {toggle ? 
+            <Grid 
+            container
+            direction="row"
+            justify="center"
+            spacing={5}
+            className={classes.container}
+            >
+                <Grid 
+                container 
+                item 
+                justify="space-between"
+                alignItems="baseline"
+                className={classes.titleContainer}
+                xs={12}>
+                   <Grid item xs={12} sm={6}>
+                    <SubTitle component={"h1"} className={classes.whiteText}>{selectedQuizTitle}</SubTitle>
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                        <ButtonComponent size={"large"} onClick={startQuiz}>Run quiz!</ButtonComponent>   
+                    </Grid> 
+                </Grid>
+                
+                <Grid item sm={6} xs={12}>
+                             
                             <QuestionForm 
                             quizPin={id} 
                             counter={counter} 
@@ -131,27 +163,24 @@ function createQuestions () {
                                 correctAnswers: [],
                                 }}
                             /> 
-                            : ''}
                             </Grid>
-                            <Grid item xs={6} sm={3}>
-                                <ButtonComponent onClick={startQuiz}>Run quiz!</ButtonComponent>
-                            </Grid>
+                            <Grid item sm={4} xs={12}>
+                                <UnderTitle className={classes.whiteText} component={"h2"}>Your questions</UnderTitle>
+                               
+                                {selectedQuizData && selectedQuizData.map((i, index) => {
+                                    return (
+                                    <ListItem 
+                                    key={index}
+                                    title={i.title}
+                                    ariaLabelEdit={'Click to edit question'}
+                                    handleEdit={() => router.push(`/createquiz/${id}/${i.id}`)}
+                                    /> 
+                                    )
+                                })
+                            }
+                        </Grid>
                     </Grid>    
-                </div>
-                <div>
-                    {selectedQuizData && selectedQuizData.map((i, index) => {
-                        return (
-                            <ListItem 
-                            key={index}
-                            title={i.title}
-                            ariaLabelEdit={'Click to edit question'}
-                            handleEdit={() => router.push(`/createquiz/${id}/${i.id}`)}
-                            />
-                                
-                        )
-                    })}
-                </div>
-            </div>    
+                        
         </PageContainer>
     );
 }

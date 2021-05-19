@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
     text: {
-        color: theme.palette.secondary.contrastText
+        color: theme.palette.text.main,
     },
 }))
 
@@ -21,14 +21,14 @@ export function HeadLine({children}){
     )
 }
 
-export function SubTitle({children, component}){
+export function SubTitle({children, component, className}){
     const classes = useStyles();
 
     return(
         <Typography
             component={component}
             variant="h2"
-            className={classes.text}
+            className={className}
         >
             {children}
         </Typography>
@@ -54,7 +54,6 @@ export function TextElement({ children }){
     return(
         <Typography
             variant="body1"
-            className={classes.text}
         >
             {children}
         </Typography>
@@ -75,13 +74,14 @@ export function LinkComponent({ classes, children, href}){
     )
 }
 
-export function ButtonComponent({children, onClick, size}){
+export function ButtonComponent({children, onClick, size, className}){
     return(
         <Button 
         variant="contained" 
         color="secondary" 
         onClick={onClick}
         size={size}
+        className={className}
         >
             {children}
         </Button>

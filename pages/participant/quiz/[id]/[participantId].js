@@ -10,6 +10,7 @@ import {
     updateUserPoints,
     getAllParticipantScores, 
 } from '../../../../utils/firebaseHelpers';
+
 import ShowParticipantOptions from '../../../../components/PageComponents/ShowParticipantOptions';
 import PageContainer from '../../../../components/PageComponents/PageContainer';
 import WaitingroomComponent from '../../../../components/PageComponents/WaitingroomComponent';
@@ -17,7 +18,6 @@ import LockedScreenComponent from '../../../../components/PageComponents/LockedS
 import ShowParticipantFeedback from '../../../../components/PageComponents/ShowParticipantFeedback';
 import QuizEndedComponent from '../../../../components/PageComponents/QuizEndedComponent';
 
-import ShowPodium from '../../../../components/PageComponents/ShowPodium';
 import { ButtonComponent } from '../../../../components/BaseComponents';
 
 function ParticipantQuizView() {
@@ -165,14 +165,14 @@ function ParticipantQuizView() {
     //ALSO CHECKS IF USER ALREADY HAS SUBMITTED AN ANSWER
     async function submitAnswer(value){
         let check = await submitAnswerToFireStore(id, participantId, currentQ[0].id, value)
-        if(value === null){
-            setUserFeedBack('Sorry - too late!')
+        if(check === true){
             setScreenLocked(true)
-            return null;
-        } else {
+        }
+        else {
             await checkIfAnswerCorrect(value, check)
             setScreenLocked(true) 
         }
+        
     }
 
     //COMPARES PARTICIPANT ANSWER WITH CORRECT ANSWER
@@ -183,26 +183,15 @@ function ParticipantQuizView() {
         if(answer.includes(value) && check === false){
             setUserPoints(userPoints + 10)
             setUserFeedBack('Correct! Awesome job!')
-            console.log('Correct!')
         } else if(check === true) {
+            setUserFeedBack(userFeedBack)
             return null;
         } else {
             setUserFeedBack('Wrong! Better luck next time')
-            console.log('Wrong!')
         }
     }
 
-    function ShowOptionsComponent(){
-        return(
-            <div>
-                <ShowParticipantOptions 
-                question={currentQ}
-                onClick={submitAnswer}
 
-                />
-            </div>
-        )
-    }
     return (
         <PageContainer>
             {!quizRunning ? <ButtonComponent onClick={() => router.push('/')}>Return to home page</ButtonComponent> : 
@@ -215,7 +204,11 @@ function ParticipantQuizView() {
                     /> 
                 : ''}
                 {!quizPending ? 
-                <ShowOptionsComponent /> 
+                <ShowParticipantOptions 
+                question={currentQ}
+                onClick={submitAnswer}
+
+                />
                 : ''}
                 {(screenLocked && !quizPending && !quizEnded) ? <LockedScreenComponent screenLocked={screenLocked}/>: ''}
                 {(screenLocked && quizPending && !quizEnded) ? 
@@ -238,113 +231,3 @@ function ParticipantQuizView() {
 }
 
 export default ParticipantQuizView;
-
-/**
- * <p>userFeedBack: {JSON.stringify(userFeedBack)}</p>
-            <p>Locked: {JSON.stringify(screenLocked)}</p>
-            <p>Running: {JSON.stringify(quizRunning)}</p>
-            <p>Pending: {JSON.stringify(quizPending)}</p>
-            <p>Ended: {JSON.stringify(quizEnded)}</p>
-            <p>CurrentQ: {JSON.stringify(currentQ)}</p>
-            <p>Points: {JSON.stringify(userPoints)}</p>
-
-            
- *     // async function getParticipantData(){
-    //     console.log(currentQ[0].id)
-    //     await participantDocument.collection('answers')
-    //     .doc(currentQ[0].id)
-    //     .get()
-    //     .then((doc) => {
-    //         if (doc.exists && doc.data().isPlaying){
-    //             console.log('User has already submitted answer')
-    //             setScreenLocked(true)
-    //             setUserFeedBack('You have already answered!')
-    //         } else {
-    //             console.log('User has not answered this q before')
-    //             setScreenLocked(false)
-    //         }
-    //     })
-    // }
- * {screenLocked ? <LoadingComponent /> : <ShowOptionsComponent />}
-                {!quizRunning ? <p>Quiz over! Final points: {userPoints}</p> : ''}
-            
- * 
-    // async function checkIfQuizIsRunning (){
-    //     quizDocument.get()
-    //     .then((doc) => {
-    //         if(doc.exists){
-                
-    //             if(doc.data().isActive === false){
-    //                 setQuizRunning(false)
-    //                 setScreenLocked(true)
-    //                 console.log('quiz is no longer active')
-
-    //             } if(doc.data().isWaitingRoomActive){
-    //                 setWaitingRoomActive(true)
-    //                 console.log('currently waiting for quiz to start')
-    //             } if(doc.data().isPending){
-    //                 setScreenLocked(true)
-    //             } else {
-    //                 const sorted = quizDocument.collection('questions')
-    //                 .where('isSelected', '==', true)
-        
-    //                 return sorted.onSnapshot((snapshot) => {
-    //                     let array = []
-    //                     snapshot.forEach((doc) => {
-    //                         array.push({
-    //                             id: doc.id,
-    //                             title: doc.data().title,
-    //                             options: doc.data().options,
-    //                         })
-    //                     })
-    
-    //                     setData(array)
-    //                     setScreenLocked(false)
-    //                     if(array.length < 0){setWaitingRoomActive(false)}
-    //                     setUserFeedBack('')
-    //                 })
-    //             }
-    //         } 
-    //     })  
-    // } 
-
-    // return docRef.onSnapshot((snapshot) => {
-    //     setQuizPending(snapshot.data().isPending)
-    //     setQuizRunning(snapshot.data().isActive)
-    // })
- * useEffect(() => {
-    //     // if(data.length > 0){
-    //     //     getParticipantData()
-    //     //     getParticipantPoints()
-    //     // }
-    //     if(allData){
-    //         if(allData.isWaitingRoomActive){
-    //             setWaitingRoomActive(true)
-    //             console.log('waiting room initally true')
-    //         } else {
-    //             console.log('waiting room initally not true')
-    //             setWaitingRoomActive(false)
-    //         }
-    //         if(allData.isPending){
-    //             setQuizPending(true)
-    //             console.log('pending status initially false')
-    //         } else {
-    //             console.log('pending status intially not false')
-    //             setQuizPending(false)
-    //         }
-    //         if(allData.isActive){
-    //             setQuizRunning(true)
-    //             console.log('quiz is active')
-    //         } else {
-    //             setQuizRunning(false)
-    //             console.log('quiz is not active')
-    //         }
-    //         if(allData.hasEnded){
-    //             setQuizEnded(true)
-    //             console.log('ended')
-    //         } else {
-    //             setQuizEnded(false)
-    //             console.log('still in play')
-    //         }
-    //     }
-    // }, [allData, currentQ]) */

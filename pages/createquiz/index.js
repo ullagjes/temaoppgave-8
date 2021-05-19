@@ -1,15 +1,29 @@
 import React, { useEffect, useState  } from 'react';
 import { useRouter } from 'next/router';
 
+import { ButtonComponent } from '../../components/BaseComponents';
+import { Grid } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+
 import { useAuth } from '../../context/authContext';
 import firebaseInstance from '../../utils/firebase';
 
-import QuizForm from '../../components/QuizForm';
+import QuizForm from '../../components/FormComponents/QuizForm';
 import PageContainer from '../../components/PageComponents/PageContainer';
-import { ButtonComponent } from '../../components/BaseComponents';
+
+const useStyles = makeStyles((theme) => ({
+    buttonVisible: {
+        display: 'block',
+        width: 300,
+        height: 100,
+    },
+    buttonNonVisible: {
+        display: 'none'
+    }
+}))
 
 function CreateNewQuiz() {
-
+    const classes = useStyles()
     const router = useRouter()
     const { user, isAuthenticated, loading } = useAuth();
     const [userId, setUserId] = useState(null)
@@ -31,13 +45,10 @@ function CreateNewQuiz() {
         }
     }, [user])
 
-    function handleOpen(){
-        setToggle(true)
+    function handleToggle(){
+        setToggle(!toggle)
     }
 
-    function handleClose(){
-        setToggle(false)
-    }
 
     //===========================================AUTHENTICATION
     
@@ -54,19 +65,28 @@ function CreateNewQuiz() {
   
     return (
         <PageContainer user={user}>
-            <ButtonComponent
-            onClick={handleOpen}
-            size={"large"}
+            <Grid 
+            container
+            justify="center"
+            alignContent="center"
+            direction="column"
             >
-                Create new quiz
-            </ButtonComponent>
-                {toggle ? 
-                    <QuizForm 
-                        quizPin={JSON.stringify(newQuizPin)} 
-                        userId={userId} 
-                        handleClose={handleClose}/> 
-                    : null
-                }
+
+                <Grid item>
+                    <ButtonComponent className={toggle ? `${classes.buttonNonVisible}` : `${classes.buttonVisible}`} onClick={handleToggle} size={"large"}> Create new quiz </ButtonComponent>
+                </Grid>
+                <Grid item>
+                    {toggle ? 
+                        <QuizForm 
+                            quizPin={JSON.stringify(newQuizPin)} 
+                            userId={userId} 
+                            /> 
+                        : null
+                    }
+                </Grid>
+                
+       
+            </Grid> 
         </PageContainer>
     );
 }

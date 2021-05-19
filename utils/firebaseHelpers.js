@@ -280,25 +280,6 @@ async function deleteEachUserAnswers(quizPin, participants){
     .delete()
   })
 
-  
-
-
-
-  
-
-
-
-  // await participants.forEach((i) => {
-  //   allQs.forEach((j) => {
-  //   collection.doc(i.id)
-  //   .collection('answers')
-  //   .doc(j.id)
-  //   .delete()
-  //   })
-    
-    
-  // })
-
 }
 
 
@@ -426,7 +407,6 @@ export async function submitAnswerToFireStore(quizPin, userNickname, questionId,
   let isAnswered = await currentAnswer.get()
   .then((doc) => {
     if(doc.exists){
-      alert('Question is already answered!')
       return true
     } else {
       currentAnswer.set({answer: answer}, {merge: true})

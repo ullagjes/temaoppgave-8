@@ -13,21 +13,26 @@ import { SubTitle } from '../BaseComponents';
 const useStyles = makeStyles((theme) => ({
 
     button: {
-        height: 50,
-        width: 50,
-        margin: theme.spacing(4)
+        width: '100%',
+        padding: theme.spacing(4)
     },
 
     container: {
-        width: '80%',
         marginTop: theme.spacing(5),
+        width: '80vw',
+        maxWidth: '720px',
+        padding: theme.spacing(3),
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        border: '10px solid black'
     },
+    
 
     iconContainer: {
         display: 'flex',
         alignContent: 'center',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        margin: theme.spacing(2),
     },
 
     icon: {
@@ -62,23 +67,25 @@ function ShowParticipantOptions({ question, onClick }) {
                         
                         <Grid 
                         container 
-                        spacing={5}
                         key={index}
+                        direction="column"
                         >   
                             <Grid 
                             className={`${classes.one} + ${classes.iconContainer}`}
                             item
-                            xs={6}>
+                            xs={12}>
                                 <Button
+                                className={classes.button}
                                 onClick={() => onClick('option_one')}>
                                 <RadioButtonUncheckedIcon className={classes.icon}/>
                                 </Button>
                             </Grid>
                             <Grid 
                             item
-                            xs={6}
+                            xs={12}
                             className={`${classes.two} + ${classes.iconContainer}`}>
                                 <Button
+                                className={classes.button}
                                 onClick={() => onClick('option_two')}>
                                     <CheckBoxOutlineBlankIcon className={classes.icon} />
                                 </Button>
@@ -87,8 +94,9 @@ function ShowParticipantOptions({ question, onClick }) {
                             <Grid 
                             className={`${classes.three} + ${classes.iconContainer}`}
                             item
-                            xs={6}>
+                            xs={12}>
                                 <Button 
+                                className={classes.button}
                                 onClick={() => onClick('option_three')}>
                                     <StarBorderIcon className={classes.icon}/>
                                 </Button>
@@ -97,8 +105,9 @@ function ShowParticipantOptions({ question, onClick }) {
                             <Grid 
                             className={`${classes.four} + ${classes.iconContainer}`}
                             item
-                            xs={6}>
+                            xs={12}>
                                 <Button 
+                                className={classes.button}
                                 onClick={() => onClick('option_four')}>
                                     <ChangeHistoryIcon className={classes.icon}/>
                                 </Button>

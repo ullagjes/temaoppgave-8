@@ -39,7 +39,7 @@ function QuizEndedComponent({
             <Grid 
             container
             alignContent="center"
-            alignItems="flex-start"
+            justify="center"
             direction="column"
             className={classes.gridContainer}
             >
@@ -47,14 +47,13 @@ function QuizEndedComponent({
                 className={classes.title}
                 item 
                 xs={12}>
-                    <SubTitle>{title}</SubTitle>
+                    <SubTitle component={"h1"}>{title}</SubTitle>
                 </Grid>
                 <Grid item xs>
                 <ShowScoresComponent 
                 title={subTitle}
                 participants={participants} 
                 bPxs={12}
-                bPsm={8}
                 />
                 </Grid>
             </Grid>

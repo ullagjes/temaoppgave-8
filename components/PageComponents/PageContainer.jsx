@@ -8,7 +8,7 @@ import { LinkComponent } from '../BaseComponents';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        backgroundColor: theme.palette.primary.main,
+
         height: '100vh',
         width: 'auto',
         maxWidth: '100vw',
@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(3),
         display: 'flex',
         backgroundColor: theme.palette.primary.dark,
+        width: 'auto',
     },
     iconContainer: {
         display: 'flex',
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-between',
     },
     navLink: {
-        color: theme.palette.secondary.light,
+        color: theme.palette.secondary.contrastText,
         padding: theme.spacing(2),
         fontSize: 25,
     },

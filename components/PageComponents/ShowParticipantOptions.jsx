@@ -11,12 +11,10 @@ import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import { SubTitle } from '../BaseComponents';
 
 const useStyles = makeStyles((theme) => ({
-
     button: {
         width: '100%',
         padding: theme.spacing(4)
     },
-
     container: {
         marginTop: theme.spacing(5),
         width: '80vw',
@@ -25,8 +23,6 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'rgba(255, 255, 255, 0.7)',
         border: '10px solid black'
     },
-    
-
     iconContainer: {
         display: 'flex',
         alignContent: 'center',
@@ -34,13 +30,11 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         margin: theme.spacing(2),
     },
-
     icon: {
         height: 80,
         width: 80,
         alignSelf: 'center'
     },
-
     one: {
         backgroundColor: theme.palette.primary.one,
     },
@@ -60,11 +54,9 @@ function ShowParticipantOptions({ question, onClick }) {
     const classes = useStyles();
     return (
         <Container className={classes.container}>
-            
             {question && question.map((i, index) => {
                 return(
                     <>
-                        
                         <Grid 
                         container 
                         key={index}
@@ -80,6 +72,7 @@ function ShowParticipantOptions({ question, onClick }) {
                                 <RadioButtonUncheckedIcon className={classes.icon}/>
                                 </Button>
                             </Grid>
+                            
                             <Grid 
                             item
                             xs={12}
@@ -90,6 +83,7 @@ function ShowParticipantOptions({ question, onClick }) {
                                     <CheckBoxOutlineBlankIcon className={classes.icon} />
                                 </Button>
                             </Grid>
+                            
                             {i.options.option_three && 
                             <Grid 
                             className={`${classes.three} + ${classes.iconContainer}`}
@@ -100,7 +94,8 @@ function ShowParticipantOptions({ question, onClick }) {
                                 onClick={() => onClick('option_three')}>
                                     <StarBorderIcon className={classes.icon}/>
                                 </Button>
-                            </Grid>}
+                            </Grid>
+                            }
                             {i.options.option_four && 
                             <Grid 
                             className={`${classes.four} + ${classes.iconContainer}`}
@@ -111,7 +106,8 @@ function ShowParticipantOptions({ question, onClick }) {
                                 onClick={() => onClick('option_four')}>
                                     <ChangeHistoryIcon className={classes.icon}/>
                                 </Button>
-                            </Grid>}
+                            </Grid>
+                            }
                         </Grid>
                     </>
                     )

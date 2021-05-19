@@ -1,24 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+//ROUTER
 import { useRouter } from 'next/router';
-
+//CONTEXT
 import { useAuth } from '../../context/authContext';
+//UTILS
 import { resetQuiz } from '../../utils/firebaseHelpers';
 import firebaseInstance from '../../utils/firebase';
 
-
+//COMPONENTS
 import WaitingroomComponent from '../../components/PageComponents/WaitingroomComponent';
-
 import { ShowOptionsComponent } from '../../components/PageComponents/ShowOptionsComponent';
 import ShowScoresComponent from '../../components/PageComponents/ShowScoresComponent';
 import PageContainer from '../../components/PageComponents/PageContainer';
-import QuizEndedComponent from '../../components/PageComponents/QuizEndedComponent';
-
 import ShowPodium from '../../components/PageComponents/ShowPodium';
-
-import { ButtonComponent, SubTitle } from '../../components/BaseComponents';
-import { Button, Container } from '@material-ui/core';
-
-//TODO: check firestore data for quizrunning instead of usestate
 
 function hostRunningQuiz() {
 
@@ -34,7 +28,7 @@ function hostRunningQuiz() {
     const [allQuizData, setAllQuizData] = useState([])
     const [quizRunning, setQuizRunning] = useState(true)
     const [quizPending, setQuizPending] = useState(null)
-    const [waitingRoomAcitve, setWaitingRoomActive] = useState(null)
+    const [waitingRoomActive, setWaitingRoomActive] = useState(null)
     const [quizEnded, setQuizEnded] = useState(null)
 
     //PARTICIPANT DATA
@@ -82,37 +76,30 @@ function hostRunningQuiz() {
         if(allQuizData){
             if(allQuizData.isWaitingRoomActive){
                 setWaitingRoomActive(true)
-                console.log('waiting room initally true')
             } else {
-                console.log('waiting room initally not true')
                 setWaitingRoomActive(false)
             }
             if(allQuizData.isPending){
                 setQuizPending(true)
-                console.log('pending status initially false')
             } else {
-                console.log('pending status intially not false')
                 setQuizPending(false)
             }
             if(allQuizData.isActive){
                 setQuizRunning(true)
-                console.log('quiz is active')
             } else {
                 setQuizRunning(false)
-                console.log('quiz is not active')
             }
             if(allQuizData.hasEnded){
                 setQuizEnded(true)
-                console.log('ended')
             } else {
                 setQuizEnded(false)
-                console.log('still in play')
             }
         }
         return;
     }, [allQuizData])
 
     //UPDATES WAITINGROOM TO FALSE AND SETS QUIZRUNNING TO TRUE
+    //CHECKS FOR MINIMUM REQUIRED PARTICIPANTS 
     function startQuiz(){
         if(participants.length === 0){
             alert('You need at least one participant!')
@@ -270,11 +257,9 @@ function hostRunningQuiz() {
         if(currentQ < allQs.length){
             setCurrentQ(currentQ + 1)
             upDateCurrentQInFirestore(allQs[currentQ].id)
-            
             undoPending()
             return; 
         } else {
-            console.log('the end')
             await runningQuizDocument
             .update({
                 hasEnded: true
@@ -306,105 +291,60 @@ function hostRunningQuiz() {
   
     return(
         <PageContainer user={user}>
-        {(!quizRunning && quizEnded) ? 
-        <NoQuizRunningComponent /> 
-        : 
-        <>
-            {waitingRoomAcitve ? 
-            <WaitingroomComponent 
-                title={`Use pincode ${id} to join the quiz!`}
-                subTitle={"Waiting for participants to join..."}
-                participants={participants}
-                onClick={startQuiz}
-            /> 
+            {(!quizRunning && quizEnded) ? 
+            <NoQuizRunningComponent /> 
             : 
-            ''}
-            {(quizRunning && !quizPending) ? 
             <>
-                {realTimeQ.map((i, index) => {
-                    console.log(i)
-                    return (
-                        <ShowOptionsComponent 
-                        key={index}
-                        title={i.title}
-                        optionOne={i.options.option_one}
-                        optionTwo={i.options.option_two}
-                        optionThree={i.options.option_three}
-                        optionFour={i.options.option_four}
-                        onClick={setQuizToPending}
-                        />
-                        )
-                    })
-                }
-            </> 
-            : 
-            ''}
-            {quizPending && !quizEnded ? 
-                <ShowScoresComponent 
-                    participants={participants} 
-                    question={realTimeQ}
-                    isPending={true}
-                    bPxs={12}
-                    bPsm={3}
-                    onClick={nextQ}
+                {waitingRoomActive ? 
+                <WaitingroomComponent 
+                    title={`Use pincode ${id} to join the quiz!`}
+                    subTitle={"Waiting for participants to join..."}
+                    participants={participants}
+                    onClick={startQuiz}
                 /> 
-            : 
-            ''}
-            {quizEnded && participants.length ? 
-            <ShowPodium 
-            participants={participants} 
-            onClick={endQuiz} 
-            /> 
-            : 
-            ''}
-        </>
-        }
+                : 
+                ''}
+                {(quizRunning && !quizPending) ? 
+                <>
+                    {realTimeQ.map((i, index) => {
+                        return (
+                            <ShowOptionsComponent 
+                            key={index}
+                            title={i.title}
+                            optionOne={i.options.option_one}
+                            optionTwo={i.options.option_two}
+                            optionThree={i.options.option_three}
+                            optionFour={i.options.option_four}
+                            onClick={setQuizToPending}
+                            />
+                            )
+                        })
+                    }
+                </> 
+                : 
+                ''}
+                {quizPending && !quizEnded ? 
+                    <ShowScoresComponent 
+                        participants={participants} 
+                        question={realTimeQ}
+                        isPending={true}
+                        bPxs={12}
+                        bPsm={3}
+                        onClick={nextQ}
+                    /> 
+                : 
+                ''}
+                {quizEnded && participants.length ? 
+                <ShowPodium 
+                participants={participants} 
+                onClick={endQuiz} 
+                /> 
+                : 
+                ''}
+            </>
+            }
         </PageContainer>
     )
 }
 
 export default hostRunningQuiz;
-
-/** 
- * {waitingRoomAcitve ? <WaitingRoomComponent /> : 
-            <div>
-                {quizRunning ? <p>Quiz running </p> : <p>not running</p>}
-            </div>
-        }
- * {!allQuizData ? 
-            <p>Loading</p> 
-        : 
-            <>
-                {waitingRoomAcitve ? <WaitingRoomComponent />
-                : 
-                <div>
-                    {quizRunning ? 
-                    <>
-                        {quizPending ?
-                        <>
-                            <p>Quiz is pending</p>
-                            
-                            <button onClick={nextQ}>Next</button>
-                        </>
-                        :
-                        <>
-                            <p>realtime q{JSON.stringify(realTimeQ)}</p>
-                            <button onClick={setQuizToPending}>Next</button>
-                        </>
-                        
-                        }
-                    
-                    </>
-                    :
-                    <>
-                        {quizEnded ? 
-                        <p>Quiz has ended</p>
-                        :
-                        <p>Loading...</p>
-                        }
-                    </>
-                    }   
-                </div>
-            }
-            </>
-        } */

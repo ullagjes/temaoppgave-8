@@ -8,14 +8,12 @@ import { LinkComponent } from '../BaseComponents';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-
         height: '100vh',
         width: 'auto',
         maxWidth: '100vw',
         margin: 0,
         padding: 0,
         display: 'block'
-        
     },
     header: {
         marginBottom: theme.spacing(3),
@@ -73,11 +71,11 @@ function PageContainer({user, children}) {
                     <p className={classes.logo} aria-label="hidden">K!</p>
                 </div>
                 {user && 
-                        <nav className={classes.navigationContainer}>
-                            <LinkComponent classes={classes.navLink} href={`/createquiz`}>Create</LinkComponent>
-                            <LinkComponent classes={classes.navLink} href={`/quizmaster/library`}>Library</LinkComponent>
-                            <LinkComponent classes={classes.navLink} href={`/quizmaster/profile`}>Profile</LinkComponent>
-                        </nav>
+                <nav className={classes.navigationContainer}>
+                    <LinkComponent classes={classes.navLink} href={`/createquiz`}>Create</LinkComponent>
+                    <LinkComponent classes={classes.navLink} href={`/quizmaster/library`}>Library</LinkComponent>
+                    <LinkComponent classes={classes.navLink} href={`/quizmaster/profile`}>Profile</LinkComponent>
+                </nav>
                 }
             </Box>
             {children}

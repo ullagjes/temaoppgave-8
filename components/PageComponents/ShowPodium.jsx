@@ -4,7 +4,11 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles'
-import { ButtonComponent, SubTitle, TextElement } from '../BaseComponents';
+import { 
+    ButtonComponent,
+    SubTitle, 
+    TextElement 
+} from '../BaseComponents';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -14,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignContent: 'center',
         alignItems: 'center',
-
     },
     container: {
         width: '90vw',
@@ -29,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(4),
         marginBottom: theme.spacing(3),
     },
-
     podium: {
         width: '100%',
     },
@@ -40,57 +42,59 @@ const useStyles = makeStyles((theme) => ({
     },
     second: {
         height: 200,
-        backgroundColor: 'silver',
+        backgroundColor: '#a1a1a1',
+        border: theme.borders.thin,
     },
     third: {
         height: 150,
-        backgroundColor: '#cd7f32'
+        backgroundColor: '#cd7f32',
+        border: theme.borders.thin,
     },
     title: {
         color: theme.palette.primary.contrastText,
     }
 }))
 
-
-function ShowPodium({participants, onClick}) {
+function ShowPodium({ participants, onClick }) {
     const classes = useStyles();
-    console.log('podium', participants)
 
     return (
         <>
-        <>{participants.length === 0 ? <p>loading</p> : 
-        <>
-        {participants && <Container className={classes.root}>
-            <SubTitle component={"h1"} className={classes.title}>Podium</SubTitle>
-            <ButtonComponent onClick={onClick}>End quiz</ButtonComponent>
-            
-                <Grid 
-                className={classes.container}
-                spacing={3}
-                direction="row"
-                justify="space-evenly"
-                alignItems="flex-end"
-                alignContent="flex-end"
-                container>
-                    {participants.length > 1 && <Grid item xs={3}>
-                        <TextElement>{participants[1].id.toUpperCase()}</TextElement>
-                        <Box className={`${classes.second} + ${classes.podium}`}></Box>               
-                    </Grid>
-                    }
-                    <Grid item xs={3}>
-                        <TextElement>{participants[0].id.toUpperCase()}</TextElement>
-                        <Box className={`${classes.first} + ${classes.podium}`}></Box>                
-                    </Grid>
-                    
-                    {participants.length > 2 && <Grid item xs={3}>
-                        <TextElement>{participants[2].id.toUpperCase()}</TextElement>
-                        <Box className={`${classes.third} + ${classes.podium}`}></Box>             
-                    </Grid>}
-            </Grid>
-            
-        </Container>}
-        </>
-        }</>
+            {participants.length === 0 ? 
+            <p>loading</p> 
+            : 
+            <>
+            {participants && 
+            <Container className={classes.root}>
+                <SubTitle component={"h1"} className={classes.title}>Podium</SubTitle>
+                <ButtonComponent onClick={onClick}>End quiz</ButtonComponent>
+                    <Grid 
+                    className={classes.container}
+                    spacing={3}
+                    direction="row"
+                    justify="space-evenly"
+                    alignItems="flex-end"
+                    alignContent="flex-end"
+                    container>
+                        {participants.length > 1 && 
+                        <Grid item xs={3}>
+                            <TextElement>{participants[1].id.toUpperCase()}</TextElement>
+                            <Box className={`${classes.second} + ${classes.podium}`}></Box>               
+                        </Grid>
+                        }
+                        <Grid item xs={3}>
+                            <TextElement>{participants[0].id.toUpperCase()}</TextElement>
+                            <Box className={`${classes.first} + ${classes.podium}`}></Box>                
+                        </Grid>
+                        {participants.length > 2 && <Grid item xs={3}>
+                            <TextElement>{participants[2].id.toUpperCase()}</TextElement>
+                            <Box className={`${classes.third} + ${classes.podium}`}></Box>             
+                        </Grid>}
+                </Grid>
+            </Container>
+            }
+            </>
+            }
         </>
     );
 }

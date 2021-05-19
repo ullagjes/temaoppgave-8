@@ -1,15 +1,15 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik'
+//YUP
 import * as Yup from 'yup'
-
+//NEXT
 import { useRouter } from 'next/router';
+//UTILS
 import { createUserInFirestore } from '../utils/firebaseHelpers';
 import firebaseInstance from '../utils/firebase';
+//COMPONENTS
 import FormComponent from '../components/FormComponents/FormComponent';
 import FormItem from '../components/FormComponents/FormItem';
 import PageContainer from '../components/PageComponents/PageContainer';
-
-
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().required().min(8).label('Email'),
@@ -34,51 +34,30 @@ function register() {
 
     return (
         <>
-        <PageContainer>
-
-            <FormComponent
-            schema={validationSchema}
-            initialValues={{
-                email: '',
-                password: '',
-            }}
-            onSubmit={(values) => onSubmit(values)}
-            formTitle={"Register new user"}
-            buttonText={"Submit"}
-            >
-                <FormItem
-                fieldName={"email"}
-                placeholer={"Email adress"}
-                labelText={"Email adress"}
-                />
-                <FormItem
-                fieldName={"password"}
-                placeholer={"password"}
-                labelText={"Choose a password (min. 8 characters)"}
-                fieldType={'password'}
-                />
-            </FormComponent>
-        </PageContainer>
-            {/* <h1>Register new user</h1>
-            <Formik
-            initialValues= {{
-                email: '',
-                password: '',
-            }}
-            validationSchema={validationSchema} 
-            onSubmit={(values) => onSubmit(values)}
-            >
-                <Form>
-                    <label htmlFor='email'>Email adress</label>
-                    <Field name="email" type="email" placeholder="Email adress"/>
-                    <ErrorMessage name="email" />
-                    <label htmlFor='password'>Password</label>
-                    <Field name="password" type="password"
+            <PageContainer>
+                <FormComponent
+                schema={validationSchema}
+                initialValues={{
+                    email: '',
+                    password: '',
+                }}
+                onSubmit={(values) => onSubmit(values)}
+                formTitle={"Register new user"}
+                buttonText={"Submit"}
+                >
+                    <FormItem
+                    fieldName={"email"}
+                    placeholer={"Email adress"}
+                    labelText={"Email adress"}
                     />
-                    <ErrorMessage name="password" />
-                    <button type="submit">Submit</button>
-                </Form>
-            </Formik> */}
+                    <FormItem
+                    fieldName={"password"}
+                    placeholer={"password"}
+                    labelText={"Choose a password (min. 8 characters)"}
+                    fieldType={'password'}
+                    />
+                </FormComponent>
+            </PageContainer>
         </>
     );
 }

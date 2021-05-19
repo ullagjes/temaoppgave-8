@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Field, ErrorMessage } from 'formik';
+
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -21,12 +23,11 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         border: 'none',
         fontSize: '1rem',
-        
         color: theme.palette.text.main,
         backgroundColor: theme.palette.transparent.main,
     },
     itemContainer: {
-        borderBottom: `2px solid ${theme.palette.secondary.dark}`,
+        borderBottom: theme.borders.thin,
         margin: theme.spacing(2),
     },
     label: {
@@ -34,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '1.2rem',
         color: theme.palette.text.main,
     },
-
 }))
 
 function FormItem({
@@ -50,7 +50,6 @@ function FormItem({
     const classes = useStyles();
     
     return (
-        <>
         <Grid item xs={12} className={classes.itemContainer}>
             <label 
             htmlFor={fieldName} 
@@ -79,9 +78,7 @@ function FormItem({
                 className={classes.errorMessage}
                 />
             </>}
-            
         </Grid>
-        </>
     );
 }
 

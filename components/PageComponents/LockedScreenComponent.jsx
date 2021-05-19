@@ -29,10 +29,12 @@ function LockedScreenComponent({ screenLocked }) {
             direction="column"
             className={classes.title}
             >   
-                <UnderTitle  component="h1">Waiting for correct answer...</UnderTitle>
-                <CircularProgress color="white" size={70} thickness={6} />
+                <UnderTitle component="h1">Waiting for correct answer...</UnderTitle>
+                <CircularProgress 
+                color="inherit" 
+                size={70} 
+                thickness={6} />
             </Grid>
-                
         </Backdrop>
     );
 }

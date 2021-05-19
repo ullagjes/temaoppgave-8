@@ -11,20 +11,18 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         backgroundColor: theme.palette.secondary.main,
         color: theme.palette.secondary.contrastText,
+        border: theme.borders.thin,
     }
 }))
-
 
 function ParticipantItem({participant}) {
 
     const classes = useStyles();
 
     return (
-        <div>
-            <Paper className={classes.paper}>
-                <UnderTitle>{participant.toUpperCase()}</UnderTitle>
-            </Paper>
-        </div>
+        <Paper className={classes.paper}>
+            <UnderTitle>{participant.toUpperCase()}</UnderTitle>
+        </Paper>
     );
 }
 

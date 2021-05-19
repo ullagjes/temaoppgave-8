@@ -14,6 +14,7 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import Grow from '@material-ui/core/Grow';
+
 import { ButtonComponent, UnderTitle } from '../BaseComponents';
 
 const useStyles = makeStyles((theme) => ({
@@ -76,8 +77,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.primary.one,
     },
     option_two: {
-        backgroundColor: theme.palette.primary.two,
-        
+        backgroundColor: theme.palette.primary.two, 
     },
     option_three: {
         backgroundColor: theme.palette.primary.three,
@@ -85,7 +85,6 @@ const useStyles = makeStyles((theme) => ({
     option_four: {
         backgroundColor: theme.palette.primary.four,
     },
-    
     paper: {
         maxWidth: '710px',
         paddingBottom: theme.spacing(2),
@@ -98,14 +97,13 @@ const useStyles = makeStyles((theme) => ({
     },
     paperContainer: {
         padding: theme.spacing(3),
-        
     },
     titleContainer: {
         padding: theme.spacing(2)
     },
     title: {
         color: 'black',
-    }
+    },
 }))
 
 function ShowScoresComponent({
@@ -122,6 +120,7 @@ function ShowScoresComponent({
     const classTwo = classes.option_two
     const classThree = classes.option_three
     const classFour = classes.option_four
+    
     return (
        
     <Grid 
@@ -132,47 +131,46 @@ function ShowScoresComponent({
     justify="center"
     alignContent="flex-start"
     >
-        {question && <Grid 
-            className={classes.paperContainer}
-            item 
-            xs={12} 
-            sm={8}
+        {question && 
+        <Grid 
+        className={classes.paperContainer}
+        item 
+        xs={12} 
+        sm={8}
+        >
+            <Paper 
+            className={classes.paper}
+            variant="outlined"
+            square
             >
-                <Paper 
-                className={classes.paper}
-                variant="outlined"
-                square
-                >
-                    <div className={classes.titleContainer}>
-                        <UnderTitle component={"h1"} className={classes.title}>Correct answer(s)</UnderTitle>
-                        {question && question.map((i, index) => {
-                            return(
-                            <div 
-                            key={index}
-                            >
-                                {i.correctAnswers.map((j, index) => {
-                            
-                                    const filteredByKey = Object.fromEntries(
-                                        Object.entries(i.options).filter(([key, value]) => key === j))
-                                    const getValue = Object.values(filteredByKey)
-                                    if(j === 'option_one'){
+                <div className={classes.titleContainer}>
+                    <UnderTitle component={"h1"} className={classes.title}>Correct answer(s)</UnderTitle>
+                    {question && question.map((i, index) => {
+                        return(
+                            <div key={index}>
+                            {i.correctAnswers.map((j, index) => {
+                                const filteredByKey = Object.fromEntries(
+                                    Object.entries(i.options).filter(([key, value]) => key === j))
+                                const getValue = Object.values(filteredByKey)
+                                
+                                if(j === 'option_one'){
                                     return(
                                         <Grow 
                                         in={isPending === true}
                                         style={{ transformOrigin: '0 0 0' }}
                                         key={index}
                                         >
-                                        <Paper 
-                                        className={`${classOne} ${classes.optionDiv}`}
-                                        >
-                                            <>
-                                            <RadioButtonUncheckedIcon className={classes.icon}/>
-                                            {getValue.map(k => {
-                                                return <p>{k}</p>
-                                                })
-                                            }
-                                            </>
-                                        </Paper> 
+                                            <Paper 
+                                            className={`${classOne} ${classes.optionDiv}`}
+                                            >
+                                                <>
+                                                <RadioButtonUncheckedIcon className={classes.icon}/>
+                                                    {getValue.map(k => {
+                                                        return <p>{k}</p>
+                                                        })
+                                                    }
+                                                </>
+                                            </Paper> 
                                         </Grow>
                                     )}
                                     if(j === 'option_two'){
@@ -195,27 +193,29 @@ function ShowScoresComponent({
                                         </Grow>
                                         )
                                     }
+
                                     if(j === 'option_three'){
                                         return(
-                                        <Grow 
-                                        mountOnEnter
-                                        unmountOnExit
-                                        in={isPending === true}
-                                        style={{ transformOrigin: '0 0 0' }}
-                                        key={index}
-                                        >
-                                        <Paper className={`${classThree} ${classes.optionDiv}`}
-                                        >
-                                        <>
-                                            <StarBorderIcon className={classes.icon}/>
-                                            {getValue.map(k => {
-                                                return <p>{k}</p>
-                                            })}
-                                        </>
-                                        </Paper>
-                                        </Grow>
-                                    )
+                                            <Grow 
+                                            mountOnEnter
+                                            unmountOnExit
+                                            in={isPending === true}
+                                            style={{ transformOrigin: '0 0 0' }}
+                                            key={index}
+                                            >
+                                            <Paper className={`${classThree} ${classes.optionDiv}`}
+                                            >
+                                                <>
+                                                    <StarBorderIcon className={classes.icon}/>
+                                                    {getValue.map(k => {
+                                                        return <p>{k}</p>
+                                                    })}
+                                                </>
+                                            </Paper>
+                                            </Grow>
+                                        )
                                     }
+
                                     if(j === 'option_four'){
                                         return(
                                             <Grow 
@@ -235,19 +235,17 @@ function ShowScoresComponent({
                                             </Grow>
                                         )
                                     }
-                                    
-                            })}
+                                })
+                            }
                             </div>
                             )
                         })
                         }
                         <ButtonComponent className={classes.button} onClick={onClick} size={"large"}>Next</ButtonComponent>
                     </div>
-                    
                 </Paper>
-                
             </Grid>}
-       
+        
         <Grid 
         className={classes.listContainer}
         container
@@ -257,11 +255,13 @@ function ShowScoresComponent({
         item 
         xs={bPxs} 
         sm={bPsm}>
+
             <Grid item xs={12}>
                 <Typography variant="h6" component={'h2'}>
                     {title}
                 </Typography> 
             </Grid>
+            
             <List>
                 {participants && participants.map((i, index) => {
                   return(
@@ -280,12 +280,9 @@ function ShowScoresComponent({
                     </Grid>
                   )
               })}
-              
             </List>
         </Grid>
-        
     </Grid>
-        
     );
 }
 

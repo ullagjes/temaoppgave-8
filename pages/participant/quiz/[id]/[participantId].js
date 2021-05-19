@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react';
-
+//NEXT
 import { useRouter } from 'next/router';
-
+//UTILS
 import firebaseInstance from '../../../../utils/firebase';
-
 import { 
     getCorrectAnswer, 
     submitAnswerToFireStore, 
     updateUserPoints,
     getAllParticipantScores, 
 } from '../../../../utils/firebaseHelpers';
-
+//COMPONENTS
 import ShowParticipantOptions from '../../../../components/PageComponents/ShowParticipantOptions';
 import PageContainer from '../../../../components/PageComponents/PageContainer';
 import WaitingroomComponent from '../../../../components/PageComponents/WaitingroomComponent';
 import LockedScreenComponent from '../../../../components/PageComponents/LockedScreenComponent';
 import ShowParticipantFeedback from '../../../../components/PageComponents/ShowParticipantFeedback';
 import QuizEndedComponent from '../../../../components/PageComponents/QuizEndedComponent';
-
 import { ButtonComponent } from '../../../../components/BaseComponents';
 
 function ParticipantQuizView() {
@@ -191,10 +189,10 @@ function ParticipantQuizView() {
         }
     }
 
-
     return (
         <PageContainer>
-            {!quizRunning ? <ButtonComponent onClick={() => router.push('/')}>Return to home page</ButtonComponent> : 
+            {!quizRunning ? <ButtonComponent onClick={() => router.push('/')}>Return to home page</ButtonComponent> 
+            : 
             <>
                 {waitingRoomActive ? 
                     <WaitingroomComponent
@@ -207,26 +205,26 @@ function ParticipantQuizView() {
                 <ShowParticipantOptions 
                 question={currentQ}
                 onClick={submitAnswer}
-
                 />
                 : ''}
-                {(screenLocked && !quizPending && !quizEnded) ? <LockedScreenComponent screenLocked={screenLocked}/>: ''}
+                {(screenLocked && !quizPending && !quizEnded) ? 
+                <LockedScreenComponent screenLocked={screenLocked}/>
+                : ''}
                 {(screenLocked && quizPending && !quizEnded) ? 
                 <ShowParticipantFeedback 
                 userFeedBack={userFeedBack}
                 userPoints={userPoints}
                 /> 
-                : 
-                ''}
+                : ''}
                 {(quizEnded && participants.length > 0) ? 
                 <QuizEndedComponent
                 title={'Quiz over!'}
                 subTitle={'Final scores'}
-                participants={participants}  /> : ''}
+                participants={participants}  /> 
+                : ''}
             </>
             }
         </PageContainer>
-                
     );
 }
 

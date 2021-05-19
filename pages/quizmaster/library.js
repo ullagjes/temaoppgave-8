@@ -1,12 +1,17 @@
 import React from 'react';
-
+//NEXT
 import { useRouter } from 'next/router';
-
+//MATERIAL UI
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+//CONTEXT
 import { useQuizMaster } from '../../context/quizMasterContext';
-
-import { SubTitle, UnderTitle} from '../../components/BaseComponents';
+import { useAuth } from '../../context/authContext';
+//COMPONENTS
+import { 
+    SubTitle, 
+    UnderTitle
+} from '../../components/BaseComponents';
 import ListItem from '../../components/PageComponents/ListItem';
 import PageContainer from '../../components/PageComponents/PageContainer';
 
@@ -30,12 +35,27 @@ const useStyles = makeStyles((theme) => ({
 
 function library() {
     const { quizes, userData } = useQuizMaster();
+    const { loading, isAuthenticated } = useAuth();
+    
     const router = useRouter();
     const user = userData.uid
     const classes = useStyles();
+
+    //===========================================AUTHENTICATION
+    
+    if(loading){
+        return(
+        <>Loading...</>
+        );
+    };
+
+    if(isAuthenticated === false) {
+        router.push('/login');
+        return <p className={classes.underTitle}>You aren't logged in.</p>
+    };
+
     return (
         <PageContainer user={user}>
-
             <Grid 
             className={classes.gridContainer}
             spacing={4}

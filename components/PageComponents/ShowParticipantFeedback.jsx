@@ -2,7 +2,10 @@ import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { TextElement, UnderTitle } from '../BaseComponents';
+import { 
+    TextElement, 
+    UnderTitle 
+} from '../BaseComponents';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -27,9 +30,13 @@ const useStyles = makeStyles((theme) => ({
 
 function ShowParticipantFeedback({ userFeedBack, userPoints }) {
     const classes = useStyles()
+
     return (
         <Paper className={classes.paper}>
-            <UnderTitle component={"h1"} className={classes.title}>{userFeedBack}</UnderTitle>
+            <UnderTitle 
+            component={"h1"} 
+            className={classes.title}
+            >{userFeedBack}</UnderTitle>
             <TextElement>Your points so far: {userPoints}</TextElement>
         </Paper>
     );

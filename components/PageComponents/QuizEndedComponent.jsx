@@ -3,10 +3,9 @@ import React from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+
 import ShowScoresComponent from './ShowScoresComponent';
-
 import { ButtonComponent, SubTitle } from '../BaseComponents';
-
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -35,7 +34,6 @@ function QuizEndedComponent({
 
     return (
         <Container>
-
             <Grid 
             container
             alignContent="center"

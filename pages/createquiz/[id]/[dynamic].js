@@ -1,10 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { 
+    useEffect, 
+    useState 
+} from 'react';
+//NEXT
 import { useRouter } from 'next/router';
-
+//CONTEXT
 import { useAuth } from '../../../context/authContext';
+//UTILS
 import { getQuestionData, updateQuestionData } from '../../../utils/firebaseHelpers';
+//COMPONENTS
 import QuestionForm from '../../../components/FormComponents/QuestionForm';
 import PageContainer from '../../../components/PageComponents/PageContainer';
+
+//ALLOWS USER TO EDIT A SINGLE QUESTION
 
 function editQuestion() {
     const router = useRouter();
@@ -18,18 +26,20 @@ function editQuestion() {
         }
     }, [user])
 
+    //COLLECTS DATA FROM FIRESTORE
+    //DATA IS USED AS INTIAL VALUES IN FORM
     async function getSelectedQuestionData(user, quizPin, questionId){
         const questionCollection = await getQuestionData(user, quizPin, questionId)
         setQuestionData(questionCollection)
     }
 
+    //UPDATES FIRESTORE DATA
     async function updateQuestion(values){
         await updateQuestionData(user.uid, id, dynamic, values)
         router.push(`/createquiz/${id}`)
     }
 
-//===========================================AUTHENTICATION
-    
+    //AUTHENTICATION
     if(loading){
         return(
         <>Loading...</>
@@ -43,49 +53,21 @@ function editQuestion() {
 
     return (
         <PageContainer user={user}>
-            { questionData && <QuestionForm initialValues={{
-                   title: questionData.title,
-                    option_one: questionData.options.option_one,
-                    option_two: questionData.options.option_two,
-                    option_three: questionData.options.option_three,
-                    option_four: questionData.options.option_four,
-                    correctAnswers: [...questionData.correctAnswers]
-                    }} 
-                    onSubmit={updateQuestion}
-            />} 
+            {questionData && 
+            <QuestionForm 
+            initialValues={{
+                title: questionData.title,
+                option_one: questionData.options.option_one,
+                option_two: questionData.options.option_two,
+                option_three: questionData.options.option_three,
+                option_four: questionData.options.option_four,
+                correctAnswers: [...questionData.correctAnswers]
+                }} 
+            onSubmit={updateQuestion}
+            />
+            } 
         </PageContainer>
     );
 }
 
 export default editQuestion;
-
-/*
-
-const questionCollection = await firebaseInstance
-        .firestore()
-        .collection('users')
-        .doc(user.uid)
-        .collection('quizes')
-        .doc(id)
-        .collection('questions')
-        .doc(dynamic)
-        .get()
-        .then((doc) => {
-            if (doc.exists){
-                return(doc.data())
-            } else {
-                console.log('does not exist')
-            }
-        })
-*<QuestionForm initialValues={{
-                    title: questionData.title,
-                    option_one: questionData.option_one,
-                    option_two: questionData.option_two,
-                    option_three: questionData.option_three,
-                    option_four: questionData.option_four,
-                    correctAnswers: [],
-                    }} 
-                    updateQuestion={updateQuestion}
-                    quizPin={id}
-                    counter={0}
-                />  */

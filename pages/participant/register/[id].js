@@ -1,17 +1,14 @@
 import React from 'react';
-
+//NEXT
 import { useRouter } from 'next/router';
-
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-
+//YUP
 import * as Yup from 'yup';
-
+//UTILS
 import { addParticipantToRunningQuiz } from '../../../utils/firebaseHelpers';
+//COMPONENTS
 import PageContainer from '../../../components/PageComponents/PageContainer';
 import FormComponent from '../../../components/FormComponents/FormComponent';
 import FormItem from '../../../components/FormComponents/FormItem';
-
-//const validationSchema = Yup.number().required('please add pincode').label('Pin code')
 
 const schema = Yup.object().shape({
     nickname: Yup.string().required('Please enter nickname').label('Nickname'),
@@ -47,7 +44,6 @@ function RegisterParticipant() {
                 />
             </FormComponent>
         </PageContainer>
-        
     );
 }
 

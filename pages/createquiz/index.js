@@ -1,13 +1,14 @@
 import React, { useEffect, useState  } from 'react';
+//NEXT
 import { useRouter } from 'next/router';
-
+//MATERIAL UI
 import { ButtonComponent } from '../../components/BaseComponents';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-
+//UTILS
 import { useAuth } from '../../context/authContext';
 import firebaseInstance from '../../utils/firebase';
-
+//COMPONENTS
 import QuizForm from '../../components/FormComponents/QuizForm';
 import PageContainer from '../../components/PageComponents/PageContainer';
 
@@ -24,12 +25,18 @@ const useStyles = makeStyles((theme) => ({
 
 function CreateNewQuiz() {
     const classes = useStyles()
+    
     const router = useRouter()
+
     const { user, isAuthenticated, loading } = useAuth();
     const [userId, setUserId] = useState(null)
+
     const [newQuizPin, setNewQuizPin] = useState(null)
+    
     const [toggle, setToggle] = useState(false)
 
+    //CREATES A UNIQUE PINCODE FOR EACH QUIZ
+    //USES GLOBAL COUNTER IN FIRESTORE
     useEffect(() => {
         if(user){
             setUserId(user.uid);
@@ -49,9 +56,7 @@ function CreateNewQuiz() {
         setToggle(!toggle)
     }
 
-
-    //===========================================AUTHENTICATION
-    
+    //AUTHENTICATION
     if(loading){
         return(
         <>Loading...</>
@@ -71,9 +76,13 @@ function CreateNewQuiz() {
             alignContent="center"
             direction="column"
             >
-
                 <Grid item>
-                    <ButtonComponent className={toggle ? `${classes.buttonNonVisible}` : `${classes.buttonVisible}`} onClick={handleToggle} size={"large"}> Create new quiz </ButtonComponent>
+                    <ButtonComponent 
+                    className={toggle ? `${classes.buttonNonVisible}` : `${classes.buttonVisible}`} 
+                    onClick={handleToggle} size={"large"}
+                    > 
+                    Create new quiz 
+                    </ButtonComponent>
                 </Grid>
                 <Grid item>
                     {toggle ? 
@@ -84,8 +93,6 @@ function CreateNewQuiz() {
                         : null
                     }
                 </Grid>
-                
-       
             </Grid> 
         </PageContainer>
     );

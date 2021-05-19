@@ -1,40 +1,41 @@
-import Head from 'next/head'
-
 import React from 'react';
+//NEXT
+import Head from 'next/head'
 import { useRouter } from 'next/router';
-import { useAuth } from '../context/authContext';
-
+//MATERIAL UI
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles'
-
-import {  ButtonComponent, HeadLine, UnderTitle } from '../components/BaseComponents';
+//COMPONENTS
+import { 
+  ButtonComponent, 
+  UnderTitle, 
+  SubTitle 
+} from '../components/BaseComponents';
 import PageContainer from '../components/PageComponents/PageContainer';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
-    maxWidth: '1200px',
     marginLeft: 'auto',
     marginRight: 'auto',
+    height: 'auto',
+    minHeight: '300px',
   },
   titleContainer: {
     textAlign: 'center',
     color: theme.palette.primary.contrastText,
+    marginBottom: theme.spacing(4)
   },
+  underTitle: {
+    color: theme.palette.primary.contrastText,
+  }
 }))
 
 export default function Home() {
 
-  //TODO: Activate createQuizPin and add pin to firestore data
-  //const [quizPin, setQuizPin] = useState(null)
-  
-
-  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter()
-
   const classes = useStyles();
 
   return (
-
     <>
       <Head>
         <title>Welcome to Kashoot</title>
@@ -46,27 +47,37 @@ export default function Home() {
       <PageContainer>
         <Grid 
         container
-        spacing={4}
         direction='column'
         alignItems='center'
-        justify='space-evenly'
+        justify='space-between'
         className={classes.grid}
         >
-          <Grid item xs={12} className={classes.titleContainer}>
-            <HeadLine component={"h1"}>Welcome!</HeadLine>
-            <UnderTitle component={"h2"}>Choose to create or join quiz to get started.</UnderTitle>
+          <Grid 
+          item xs={12}
+          className={classes.titleContainer}
+          >
+            <SubTitle component={"h1"}>Welcome!</SubTitle>
+            <UnderTitle component={"h2"} className={classes.underTitle}>Choose to create or join quiz to get started.</UnderTitle>
           </Grid>
-          <Grid item xs={12} sm={6}>
-
+          <Grid 
+          item xs={12} 
+          sm={6}
+          >
             <ButtonComponent onClick={() => router.push('/login')} size={"large"}>Create quiz</ButtonComponent>
           </Grid>
-          <Grid item xs={12} sm={6}>
-
-            <ButtonComponent onClick={() => router.push('/participant')} size={"large"}>Join quiz</ButtonComponent>
+          <Grid 
+          item xs={12} 
+          sm={6}
+          >
+            <ButtonComponent 
+            onClick={() => router.push('/participant')} 
+            size={"large"}
+            >
+              Join quiz
+            </ButtonComponent>
           </Grid>
         </Grid>
       </PageContainer>
-
     </>
   )
 }

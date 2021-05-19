@@ -1,12 +1,16 @@
 import React from 'react';
-
+//MATERIAL UI
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import { SubTitle, TextElement, UnderTitle } from '../../components/BaseComponents';
+//CONTEXT
+import { useAuth } from '../../context/authContext';
+//COMPONENTS
+import { 
+    SubTitle, 
+    UnderTitle 
+} from '../../components/BaseComponents';
 import PageContainer from '../../components/PageComponents/PageContainer';
-
-import { useQuizMaster } from '../../context/quizMasterContext';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -31,9 +35,21 @@ const useStyles = makeStyles((theme) => ({
 
 function quizMaster() {
     const classes = useStyles();
-    const { userData, quizes } = useQuizMaster();
-    const user = userData.uid
+    const { user, loading, isAuthenticated } = useAuth();
 
+    //===========================================AUTHENTICATION
+    
+    if(loading){
+        return(
+        <>Loading...</>
+        );
+    };
+
+    if(isAuthenticated === false) {
+        router.push('/login');
+        return <>You aren't logged in.</>
+    };
+    
     return (
         <PageContainer user={user}>
             <Grid container>

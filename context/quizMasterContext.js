@@ -13,8 +13,6 @@ import { useAuth } from './authContext';
 const QuizMasterContext = createContext({
     quizes: [],
     userData: []
-    //addQuiz: () => {},
-    //removeQuiz: () => {},
 });
 
 export const QuizMaster = ({ children }) => {
@@ -40,20 +38,6 @@ export const QuizMaster = ({ children }) => {
         setQuizes(data)
     }
     
-
-    
-    //const questionsCopy = [...questions];
-
-    /*const addQuiz = (question) => {
-        setQuestions(question);
-
-    };
-    
-    const removeQuestion = (index) => {
-        questionsCopy.splice(index, 1);
-        setQuestions(questionsCopy);
-    };*/
-
     return(
         <QuizMasterContext.Provider value={{ quizes, userData }}>
             {children}

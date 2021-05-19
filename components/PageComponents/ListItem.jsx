@@ -1,12 +1,10 @@
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import  Card  from '@material-ui/core/Card';
 import  CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton'; 
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import Link from '@material-ui/core/Link';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
         maxWidth: '350px',
         margin: theme.spacing(2),
+        border: theme.borders.medium,
     },
     details: {
         display: 'flex',
@@ -76,11 +75,9 @@ export default function ListItem({
                 <IconButton aria-label={ariaLabelEdit} onClick={handleEdit}>
                     <EditIcon className={classes.editIcon}/>
                 </IconButton>
-                
                 {handleDelete && <IconButton aria-label={ariaLabelDelete} onClick={handleDelete}>
                     <DeleteIcon className={classes.deleteIcon}/>
                 </IconButton>}
-
             </div>
         </Card>
     )

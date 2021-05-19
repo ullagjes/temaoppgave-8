@@ -1,13 +1,17 @@
 import '../styles/globals.css'
+
 import React, { useEffect } from 'react';
-import { AuthProvider } from '../context/authContext';
-import { Question } from '../context/questionContext';
-import { QuizMaster } from '../context/quizMasterContext';
+//MATERIAL UI
 import { ThemeProvider } from '@material-ui/styles';
+//CONTEXT
+import { AuthProvider } from '../context/authContext';
+import { QuizMaster } from '../context/quizMasterContext';
+//UTILS
 import theme from '../utils/theme';
 
 function MyApp({ Component, pageProps }) {
 
+  //MAKES MATERIAL UI COMPATIBLE WITH NEXT.JS
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side');
     if(jssStyles){
@@ -19,11 +23,8 @@ function MyApp({ Component, pageProps }) {
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <QuizMaster>
-          <Question>
             <Component {...pageProps} />  
-          </Question>
         </QuizMaster>
-        
       </AuthProvider>
     </ThemeProvider>
       

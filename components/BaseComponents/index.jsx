@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
     text: {
         color: theme.palette.text.main,
     },
+    mainButton: {
+        border: theme.borders.thin,
+    }
 }))
 
 export function HeadLine({children}){
@@ -22,8 +25,6 @@ export function HeadLine({children}){
 }
 
 export function SubTitle({children, component, className}){
-    const classes = useStyles();
-
     return(
         <Typography
             component={component}
@@ -50,7 +51,6 @@ export function UnderTitle({children, component, className}){
 }
 
 export function TextElement({ children }){
-    const classes = useStyles()
     return(
         <Typography
             variant="body1"
@@ -75,40 +75,16 @@ export function LinkComponent({ classes, children, href}){
 }
 
 export function ButtonComponent({children, onClick, size, className}){
+    const classes = useStyles()
     return(
         <Button 
         variant="contained" 
         color="secondary" 
         onClick={onClick}
         size={size}
-        className={className}
+        className={`${classes.mainButton} + ${className}`}
         >
             {children}
         </Button>
     )
 }
-
-
-/*${props => props.theme.colors.primary} */
-/*${props => props.theme.colors.dark} */
-/*${props => props.theme.colors.light} */
-/*${props => props.theme.colors.medium} */
-/*${props => props.theme.colors.contrastLight} */
-/*${props => props.theme.colors.contrastDark} */
-/*${props => props.theme.colors.optionOne}
-/*${props => props.theme.colors.optionTwo}
-/*${props => props.theme.colors.optionThree}
-/*${props => props.theme.colors.optionFour}
-/*${props => props.theme.colors.black}
-
-primary: "#52057b",
-        dark: "#21094e",
-        light: "#bc6ff1",
-        medium: "#892cdc",
-        contrastLight: "#a5e1ad",
-        contrastDark: "#4ca1a3",
-        optionOne: "#54e346",
-        optionTwo: "#ec0101",
-        optionThree: "#f7ea00",
-        optionFour: "#318fb5",
-        black: "#252525",*/
